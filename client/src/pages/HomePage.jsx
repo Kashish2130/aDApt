@@ -1,13 +1,13 @@
 import React from "react";
 import "@fontsource/krona-one";
 import "@fontsource-variable/grandstander";
-import NavbarComp from "../components/HomePage/NavbarComp";
+// import NavbarComp from "../components/HomePage/NavbarComp";
 
 const HomePage = () => {
   return (
     <div>
       <div className="min-h-screen flex flex-col bg-gray-100">
-        <NavbarComp/>
+      
         {/* CONTENT SECTION */}
         <div className="bg-gradient-to-r from-[#B1F0F7] via-[#81BFDA] via-[#F5F0CD] to-[#FADA7A] shadow-lg flex-grow flex items-center justify-center text-center rounded-lg m-3 px-8 py-12">
           <div className="text-gray-800">

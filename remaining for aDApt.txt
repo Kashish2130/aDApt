@@ -1,0 +1,29 @@
+navigate to the features page
+show toast "hello username"
+
+auth context required when i need to show the features and functionalities on the basis of if the user is admin or not
+
+so hide the register button when i click on it using use location hook
+
+ask jaymin about admin key (in login and signup ) as in do i need to make auth context for that right now?
+
+toast not coming in login
+
+make sure that everything is responsive
+
+go for features pages
+->shared resource library
+->qanda manager
+->lost and found
+
+implement auth context for 
+when i click on get started button it should navigate me to the register page if i am not logged in and if i am logged in then it should show me the drop down menu!
+
+change the color of the scrollbar
+
+features page
+get started auth context fucntionality
+
+auth middleware not working properly
+
+

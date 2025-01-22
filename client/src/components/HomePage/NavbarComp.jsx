@@ -1,17 +1,23 @@
-import React from "react";
-import studentImage from "../../assets/student.png";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import studentImage from "../../assets/student.png";
+import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 
 const NavbarComp = () => {
   const navigate = useNavigate();
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    navigate("/signup");
-  };
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogoClick = () => {
     navigate("/");
+  };
+
+  const handleEmailsClick = () => {
+    navigate("/emails"); // Navigate to /emails route
+    setMenuOpen(false); // Close dropdown
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen); // Toggle dropdown
   };
 
   return (
@@ -30,17 +36,35 @@ const NavbarComp = () => {
               className="object-cover"
             />
           </div>
-          <span className="text-xl font-semibold text-black">
-            aDApt
-          </span>
+          <span className="text-xl font-semibold text-black">aDApt</span>
         </div>
-        {/* Register Button */}
-        <button
-          className="px-4 py-2 bg-black text-white font-medium rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none"
-          onClick={handleRegister}
-        >
-          Register
-        </button>
+
+        {/* Dropdown Button */}
+        <div className="relative">
+          <button
+            className="px-4 py-2 bg-black text-white font-medium rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none flex items-center gap-2"
+            onClick={toggleMenu}
+          >
+            Get Started
+          </button>
+
+          {/* Dropdown Menu */}
+          {menuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-xl rounded-sm z-50">
+              <ul className="flex flex-col divide-y divide-gray-200">
+                <li
+                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  onClick={handleEmailsClick}
+                >
+                  <MarkEmailUnreadIcon />
+                  <span className="block text-gray-800 font-medium">
+                    Imp Emails
+                  </span>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </nav>
     </div>
   );

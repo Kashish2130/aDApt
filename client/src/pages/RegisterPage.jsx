@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarComp from "../components/HomePage/NavbarComp";
+// import NavbarComp from "../components/HomePage/NavbarComp";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { Success, Error } from "../components/ToastComp";
@@ -57,12 +57,12 @@ const RegisterPage = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Navbar Section */}
-      <NavbarComp />
+      {/* <NavbarComp /> */}
       {/* Toast Container */}
       <Toaster />
       {/* Remaining Space for the Form */}
       <div
-        className="flex-grow flex items-center justify-center bg-gradient-to-r from-[#B1F0F7] via-[#81BFDA] via-[#F5F0CD] to-[#FADA7A] m-1"
+        className="flex-grow flex items-center justify-center bg-gradient-to-r from-[#B1F0F7] via-[#81BFDA] via-[#F5F0CD] to-[#FADA7A] m-3"
         style={{ fontFamily: "'Grandstander Variable', system-ui" }}
       >
         {/* Registration Card */}
