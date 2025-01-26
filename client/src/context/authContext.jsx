@@ -1,75 +1,59 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setLoggedIn] = useState(() => {
-    return localStorage.getItem("isLoggedIn") === "true";
-  });
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem("isAdmin") === "true";
-  });
-  const [id, setId] = useState(() => {
-    return localStorage.getItem("id") || "";
-  });
-  const [name, setname] = useState(() => {
-    return localStorage.getItem("name") || "";
-  });
-  const [emailId, setEmailId] = useState(() => {
-    return localStorage.getItem("emailId") || "";
-  });
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token") || "";
+  });
+  const [userData, setUserData] = useState(() => {
+    return JSON.parse(localStorage.getItem("userData")) || null;
+  });
+  const [isLoggedIn, setLoggedIn] = useState(() => {
+    return (
+      localStorage.getItem("token") &&
+      localStorage.getItem("isLoggedIn") === "true"
+    );
+  });
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem("isAdmin") || "";
   });
 
   useEffect(() => {
     localStorage.setItem("token", token);
-    localStorage.setItem("id", id);
-    localStorage.setItem("name", name);
-    localStorage.setItem("emailId", emailId);
+    localStorage.setItem("userData", JSON.stringify(userData));
     localStorage.setItem("isLoggedIn", isLoggedIn);
     localStorage.setItem("isAdmin", isAdmin);
-  }, [token, id, name, emailId, isLoggedIn, isAdmin]);
+  }, [token, userData, isLoggedIn]);
 
-  const login = (token, id, name, emailId, isLoggedIn, isAdmin) => {
+  const logIn = (token, userData, isLoggedIn, isAdmin) => {
     setToken(token);
-    setId(id);
-    setname(name);
-    setEmailId(emailId);
+    setUserData(userData);
     setLoggedIn(isLoggedIn);
     setIsAdmin(isAdmin);
   };
 
-  // Logout function
   const logout = () => {
     setToken("");
-    setname("");
-    setEmailId("");
+    setUserData(null);
     setLoggedIn(false);
+    setIsAdmin(false);
     localStorage.clear();
   };
 
   return (
     <AuthContext.Provider
       value={{
-        login,
-        logout,
-        isLoggedIn,
-        setLoggedIn,
-        isAdmin,
-        setIsAdmin,
-        id,
-        setId,
-        name,
-        setname,
-        emailId,
-        setEmailId,
         token,
-        setToken,
+        userData,
+        isLoggedIn,
+        isAdmin,
+        logIn,
+        logout,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
-
 export { AuthProvider, AuthContext };

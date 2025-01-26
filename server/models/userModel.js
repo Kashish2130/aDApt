@@ -25,11 +25,9 @@ const userSchema = new Schema(
             required: [true, "Password is required"],
             minlength: [6, "Password must be at least 6 characters long"],
         },
-        adminkey: {
-            type: String,
-            required: false,
-            minlength: [6, "Admin key must be at least 6 characters long"],
-            trim: true,
+        isAdmin: {
+            type: Boolean,
+            default: false,
         },
     },
     {

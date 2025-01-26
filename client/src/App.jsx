@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavbarComp from "./components/HomePage/NavbarComp";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
@@ -9,7 +9,7 @@ import ImpEmailsPage from "./pages/ImpEmailsPage";
 
 const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <NavbarComp /> {/* Navbar component will have access to AuthContext */}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/emails" element={<ImpEmailsPage />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 

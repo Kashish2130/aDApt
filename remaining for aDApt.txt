@@ -26,4 +26,37 @@ get started auth context fucntionality
 
 auth middleware not working properly
 
+add token in the localstorage in the backend and take it back in the frontend
+
+show hide in password
+
+logout afetr login in place of get started button
+
+=======================================================================================================
+
+adminkey concept
+remove adminKey from schema and thne do the further changes in auth controller apis
+ if (adminkey && adminkey != process.env.KEY) {
+            return res.status(400).json({ message: 'Invalid admin key' });
+        }
+
+
+{isLoggedIn ? userData.fullname : "Get Started"} 
+{/* above fucntionality not wokrking */}
+
+not working
+navbarComp.jsx
+when i am logged in i should be shown a toggle menu div which has two options 
+- emails 
+- logout
+
+and if I am not logged in then i should be navigated to the ("/login")
+
+check the entire flow of the website and see where are flaws and where i have to correcr
+
+so mainly do this things
+- "get started" button with toggle menu properly and to check auth context is working properly or not take userdata.fullname in navbar comp and change the text to username from get started.
+
+also i am nt able to creat user properly so check that as well.
+
 

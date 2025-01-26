@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import NavbarComp from "../components/HomePage/NavbarComp";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { Success, Error } from "../components/ToastComp";
+import { AuthContext } from "../context/AuthContext";
 
 const RegisterPage = () => {
+  const { logIn } = useContext(AuthContext);
+
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,13 +44,23 @@ const RegisterPage = () => {
         }
       );
 
-      if (response.status === 200) {
-        // const firstName = formData.fullname.split(" ")[0]; // Extract first name
-        Success("Welcome to aDApt!");
-        setTimeout(() => {
-          navigate("/features");
-        }, 1000);
-      }
+      const token = response.data.token;
+      const userData = response.data.user;
+      const Admin = response.data.user.isAdmin;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("isAdmin", Admin);
+
+      logIn(token, userData, true, Admin);
+
+      // const firstName = formData.fullname.split(" ")[0]; // Extract first name
+      Success("Welcome to aDApt!");
+
+      setTimeout(() => {
+        navigate("/features");
+      }, 2000);
     } catch (error) {
       Error(error.response?.data?.message || "Signup failed");
     }

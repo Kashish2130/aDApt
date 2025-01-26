@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import NavbarComp from "../components/HomePage/NavbarComp";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { Success, Error } from "../components/ToastComp";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,6 +11,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [adminkey, setAdminkey] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const { logIn } = useContext(AuthContext);
 
   const handleAdminToggle = () => {
     setIsAdmin(!isAdmin);
@@ -33,16 +35,25 @@ const LoginPage = () => {
         }
       );
 
-      if (response.status === 200) {
-        // Show success toast
-        console.log(response.data.user);
-        const firstName = response.data.user.fullname.split(" ")[0]; // Extract first name
-        console.log(firstName);
-        Success(`Hello, ${firstName}!`);
+      const token = response.data.token;
+      const userData = response.data.user;
+      const Admin = response.data.user.isAdmin;
 
-        // Navigate to the features page after successful login
+      localStorage.setItem("token", token);
+      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("isAdmin", Admin);
+
+      logIn(token, userData, true, Admin);
+
+      // Show success toast
+      const firstName = response.data.user.fullname.split(" ")[0]; // Extract first name
+      Success(`Hello, ${firstName}!`);
+
+      // Navigate to the features page after successful login
+      setTimeout(() => {
         navigate("/features");
-      }
+      }, 2000);
     } catch (error) {
       console.error("Login error:", error);
       Error("Invalid email or password!");

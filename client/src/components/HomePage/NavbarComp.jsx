@@ -1,23 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import studentImage from "../../assets/student.png";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import { AuthContext } from "../../context/AuthContext";
 
 const NavbarComp = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Assuming isLoggedIn is a boolean value from the AuthContext
+  const { isAdmin, isLoggedIn, userData, logout } = useContext(AuthContext); // Correctly destructure the context
+
   const handleLogoClick = () => {
-    navigate("/");
+    navigate("/"); // Navigate to the homepage
   };
 
   const handleEmailsClick = () => {
     navigate("/emails"); // Navigate to /emails route
-    setMenuOpen(false); // Close dropdown
+    setMenuOpen(false); // Close dropdown when clicking on emails
   };
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen); // Toggle dropdown
+    if (isLoggedIn) {
+      setMenuOpen(!menuOpen);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(!menuOpen);
+    navigate("/");
   };
 
   return (
@@ -45,7 +59,12 @@ const NavbarComp = () => {
             className="px-4 py-2 bg-black text-white font-medium rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none flex items-center gap-2"
             onClick={toggleMenu}
           >
-            Get Started
+            {isLoggedIn
+              ? isAdmin
+                ? `BAPU BAPU${userData.fullname}`
+                : userData.fullname
+              : "Get Started"}
+            {/* above fucntionality not wokrking */}
           </button>
 
           {/* Dropdown Menu */}
@@ -59,6 +78,15 @@ const NavbarComp = () => {
                   <MarkEmailUnreadIcon />
                   <span className="block text-gray-800 font-medium">
                     Imp Emails
+                  </span>
+                </li>
+                <li
+                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  onClick={handleLogout}
+                >
+                  <MarkEmailUnreadIcon />
+                  <span className="block text-gray-800 font-medium">
+                    Logout
                   </span>
                 </li>
               </ul>
