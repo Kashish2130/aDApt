@@ -55,7 +55,6 @@ const RegisterPage = () => {
 
       logIn(token, userData, true, Admin);
 
-      // const firstName = formData.fullname.split(" ")[0]; // Extract first name
       Success("Welcome to aDApt!");
 
       setTimeout(() => {
