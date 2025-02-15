@@ -4,26 +4,28 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || "";
+    return sessionStorage.getItem("token") || "";
   });
   const [userData, setUserData] = useState(() => {
-    return JSON.parse(localStorage.getItem("userData")) || null;
+    return JSON.parse(sessionStorage.getItem("userData")) || null;
   });
+
   const [isLoggedIn, setLoggedIn] = useState(() => {
     return (
-      localStorage.getItem("token") &&
-      localStorage.getItem("isLoggedIn") === "true"
+      sessionStorage.getItem("token") &&
+      JSON.parse(sessionStorage.getItem("isLoggedIn") || "false")
     );
   });
+
   const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem("isAdmin") || "";
+    return JSON.parse(sessionStorage.getItem("isAdmin") || "false");
   });
 
   useEffect(() => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("userData", JSON.stringify(userData));
-    localStorage.setItem("isLoggedIn", isLoggedIn);
-    localStorage.setItem("isAdmin", isAdmin);
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("userData", JSON.stringify(userData));
+    sessionStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn));
+    sessionStorage.setItem("isAdmin", JSON.stringify(isAdmin));
   }, [token, userData, isLoggedIn]);
 
   const logIn = (token, userData, isLoggedIn, isAdmin) => {
@@ -38,7 +40,7 @@ const AuthProvider = ({ children }) => {
     setUserData(null);
     setLoggedIn(false);
     setIsAdmin(false);
-    localStorage.clear();
+    sessionStorage.clear();
   };
 
   return (

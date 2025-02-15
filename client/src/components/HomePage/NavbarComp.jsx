@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import studentImage from "../../assets/student.png";
-import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import * as Icons from "@mui/icons-material";
 import { AuthContext } from "../../context/AuthContext";
 
 const NavbarComp = () => {
@@ -18,6 +18,11 @@ const NavbarComp = () => {
   const handleEmailsClick = () => {
     navigate("/emails"); // Navigate to /emails route
     setMenuOpen(false); // Close dropdown when clicking on emails
+  };
+
+  const handlefeatures = () => {
+    navigate("/features");
+    setMenuOpen(false);
   };
 
   const toggleMenu = () => {
@@ -59,12 +64,21 @@ const NavbarComp = () => {
             className="px-4 py-2 bg-black text-white font-medium rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none flex items-center gap-2"
             onClick={toggleMenu}
           >
-            {isLoggedIn
-              ? isAdmin
-                ? `BAPU BAPU${userData.fullname}`
-                : userData.fullname
-              : "Get Started"}
-            {/* above fucntionality not wokrking */}
+            {isLoggedIn ? (
+              isAdmin ? (
+                <>
+                  <Icons.PersonAddAlt />
+                  {userData.fullname.split(" ")[0]}
+                </>
+              ) : (
+                <>
+                  <Icons.PersonOutline />
+                  {userData.fullname.split(" ")[0]}
+                </>
+              )
+            ) : (
+              "Get Started"
+            )}
           </button>
 
           {/* Dropdown Menu */}
@@ -75,16 +89,25 @@ const NavbarComp = () => {
                   className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
                   onClick={handleEmailsClick}
                 >
-                  <MarkEmailUnreadIcon />
+                  <Icons.MarkEmailUnread />
                   <span className="block text-gray-800 font-medium">
                     Imp Emails
                   </span>
                 </li>
                 <li
                   className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  onClick={handlefeatures}
+                >
+                  <Icons.Category />
+                  <span className="block text-gray-800 font-medium">
+                    Features
+                  </span>
+                </li>
+                <li
+                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
                   onClick={handleLogout}
                 >
-                  <MarkEmailUnreadIcon />
+                  <Icons.Logout />
                   <span className="block text-gray-800 font-medium">
                     Logout
                   </span>

@@ -6,6 +6,9 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ImpEmailsPage from "./pages/ImpEmailsPage";
+import LostNFoundPage from "./pages/LostNFoundPage";
+import QNAManagerPage from "./pages/QNAManagerPage";
+import SharedResLibPage from "./pages/SharedResLibPage";
 
 const App = () => {
   return (
@@ -17,6 +20,9 @@ const App = () => {
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/emails" element={<ImpEmailsPage />} />
+        <Route path="/lostnfound" element={<LostNFoundPage/>}/>
+        <Route path="/QnA" element={<QNAManagerPage/>}/>
+        <Route path="/sharedreslib" element={<SharedResLibPage/>}/>
       </Routes>
     </BrowserRouter>
   );

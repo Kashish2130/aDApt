@@ -4,9 +4,15 @@ import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { Success, Error } from "../components/ToastComp";
 import { AuthContext } from "../context/AuthContext";
+import * as Icons from "@mui/icons-material";
 
 const RegisterPage = () => {
   const { logIn } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -44,14 +50,16 @@ const RegisterPage = () => {
         }
       );
 
+      console.log(response);
+
       const token = response.data.token;
       const userData = response.data.user;
       const Admin = response.data.user.isAdmin;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("userData", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("isAdmin", Admin);
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("userData", JSON.stringify(userData));
+      sessionStorage.setItem("isLoggedIn", true);
+      sessionStorage.setItem("isAdmin", Admin);
 
       logIn(token, userData, true, Admin);
 
@@ -106,16 +114,23 @@ const RegisterPage = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#81BFDA]"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label className="block text-sm font-medium mb-2">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#81BFDA]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#81BFDA] pr-10"
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute top-10 right-3 text-gray-500"
+              >
+                {showPassword ? <Icons.Visibility /> : <Icons.VisibilityOff />}
+              </button>
             </div>
             <div className="mb-4 flex items-center">
               <label className="block text-sm font-medium mr-2">Admin?</label>
