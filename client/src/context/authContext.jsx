@@ -6,19 +6,32 @@ const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => {
     return sessionStorage.getItem("token") || "";
   });
+
   const [userData, setUserData] = useState(() => {
-    return JSON.parse(sessionStorage.getItem("userData")) || null;
+    try {
+      const data = sessionStorage.getItem("userData");
+      return data && data !== "undefined" ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
   });
 
   const [isLoggedIn, setLoggedIn] = useState(() => {
-    return (
-      sessionStorage.getItem("token") &&
-      JSON.parse(sessionStorage.getItem("isLoggedIn") || "false")
-    );
+    try {
+      const data = sessionStorage.getItem("isLoggedIn");
+      return data && data !== "undefined" ? JSON.parse(data) : false;
+    } catch (e) {
+      return false;
+    }
   });
 
   const [isAdmin, setIsAdmin] = useState(() => {
-    return JSON.parse(sessionStorage.getItem("isAdmin") || "false");
+    try {
+      const data = sessionStorage.getItem("isAdmin");
+      return data && data !== "undefined" ? JSON.parse(data) : false;
+    } catch (e) {
+      return false;
+    }
   });
 
   useEffect(() => {

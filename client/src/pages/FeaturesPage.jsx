@@ -26,7 +26,7 @@ const FeaturesPage = () => {
         {/* Left Side (Image) */}
         <div className="flex-1 flex justify-center" onClick={handleSharedResLib}>
           <img
-            src="https://placehold.co/600x400?text=Shared+Resource+Library"
+            src="https://res.cloudinary.com/dzijmh8dz/image/upload/v1747330890/Brown_and_Beige_Academic_Books_Project_Presentation_cet0fg.png"
             alt="Shared Resource Library"
             className="rounded-md shadow-md"
           />
@@ -52,7 +52,7 @@ const FeaturesPage = () => {
         {/* Left Side (Image) */}
         <div className="flex-1 flex justify-center" onClick={handleQnA}>
           <img
-            src="https://placehold.co/600x400?text=Q%26A+Manager"
+            src="https://res.cloudinary.com/dzijmh8dz/image/upload/v1747327516/Blue_and_Orange_Geometric_Q_A_Youtube_Thumbnail_qg48ic.png"
             alt="Q&A Manager"
             className="rounded-md shadow-md"
           />
@@ -79,8 +79,7 @@ const FeaturesPage = () => {
           className="flex-1 flex justify-center"
           onClick={handlelostNfound}
         >
-          <img
-            src="https://placehold.co/600x400?text=Lost+and+Found+Manager"
+          <img src="https://placehold.co/1600x00?text=Lost+and+Found+Manager"
             alt="Lost and Found Manager"
             className="rounded-md shadow-md"
           />

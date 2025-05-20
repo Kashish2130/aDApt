@@ -8,7 +8,10 @@ import { hashSync, compareSync } from "bcrypt";
 export const createUser = async (req, res) => {
   try {
     const { fullname, email, password, adminkey } = req.body;
-
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists with this email" });
+    }
     // Hash the password
     const hash = hashSync(password, 10);
 

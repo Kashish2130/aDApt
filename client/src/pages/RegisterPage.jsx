@@ -69,7 +69,7 @@ const RegisterPage = () => {
         navigate("/features");
       }, 2000);
     } catch (error) {
-      Error(error.response?.data?.message || "Signup   failed");
+      Error(error.response?.data?.message || "Signup failed");
     }
   };
 

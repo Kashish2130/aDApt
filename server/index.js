@@ -4,24 +4,26 @@ import { connect } from "mongoose";
 import emailRouter from "./routes/emailRoute.js";
 import cors from "cors";
 import authRouter from "./routes/authRoute.js";
+import uploadRouter from './routes/uploadRoute.js';
+import jwt from "jsonwebtoken";
 
 const server = express();
 
 
 main().catch((err) => {
-    console.error("DB Connection failed: ", err);
-  });
-  async function main() {
-    try {
-      await connect(process.env.MONGO_URL);
-      console.log("DB Connected !!");
-    } catch (error) {
-      console.error("Database connection error: ", error);
-    }
+  console.error("DB Connection failed: ", err);
+});
+async function main() {
+  try {
+    await connect(process.env.MONGO_URL);
+    console.log("DB Connected !!");
+  } catch (error) {
+    console.error("Database connection error: ", error);
+  }
 }
 
-server.get("/",(req,res)=>{
-    res.send("Hey!This is my new Node JS project.");
+server.get("/", (req, res) => {
+  res.send("Hey!This is my new Node JS project.");
 });
 
 //middlewares
@@ -56,9 +58,12 @@ const auth = (req, res, next) => {
 
 server.use(cors());
 server.use(express.json());
+//for parsing data which is coming through the form data // here it is for files |
+server.use(express.urlencoded({ extended: true }));
 server.use('/api/auth', authRouter);
-server.use("/api/emails", emailRouter);
-
-server.listen(process.env.PORT,()=>{
-    console.log('server started');
+server.use("/api/emails", auth, emailRouter);
+// server.use('/uploads', express.static('uploads'));
+server.use("/api/upload", uploadRouter);
+server.listen(process.env.PORT, () => {
+  console.log('server started');
 })

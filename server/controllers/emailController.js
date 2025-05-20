@@ -14,8 +14,8 @@ export const getAllEmails = async (req, res) => {
 // Create a new email
 export const createEmail = async (req, res) => {
     try {
-        const { name, emailId } = req.body;
-        const newEmail = await Email.create({ name, emailId });
+        const { type, emailId } = req.body;
+        const newEmail = await Email.create({ type, emailId});
         res.status(201).json(newEmail); // 201: Created
     } catch (err) {
         console.error(err);
@@ -27,10 +27,10 @@ export const createEmail = async (req, res) => {
 export const updateEmail = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, emailId } = req.body;
+        const { type, emailId } = req.body;
         const updatedEmail = await Email.findByIdAndUpdate(
             id,
-            { name, emailId },
+            { type, emailId },
             { new: true, runValidators: true }
         );
         if (!updatedEmail) {
