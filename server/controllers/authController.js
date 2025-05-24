@@ -18,9 +18,6 @@ export const createUser = async (req, res) => {
     // Check if the admin key matches
     const isAdmin = adminkey && adminkey === process.env.KEY;
 
-    // Generate JWT token
-    const token = jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
-
     // Create a new user object with hashed password and token
     const newUser = new User({
       fullname,
@@ -28,6 +25,9 @@ export const createUser = async (req, res) => {
       password: hash,
       isAdmin, // Set isAdmin based on the admin key
     });
+
+    // Generate JWT token
+    const token = jwt.sign({ id:newUser._id }, process.env.SECRET, { expiresIn: "10h" });
 
     // Save the user to the database
     const savedUser = await newUser.save();
@@ -71,11 +71,7 @@ export const loginUser = async (req, res) => {
     const isAdmin = adminkey && adminkey === process.env.KEY;
 
     // Generate a token
-    const token = jwt.sign(
-      { email, fullname: user.fullname },
-      process.env.SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id:user._id }, process.env.SECRET, { expiresIn: "10h" });
 
     res.status(200).json({
       user: {

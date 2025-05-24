@@ -5,7 +5,9 @@ import emailRouter from "./routes/emailRoute.js";
 import cors from "cors";
 import authRouter from "./routes/authRoute.js";
 import uploadRouter from './routes/uploadRoute.js';
+import sharedLibraryRouter from "./routes/sharedResLibRoute.js";
 import jwt from "jsonwebtoken";
+import User from "./models/userModel.js";
 
 const server = express();
 
@@ -27,7 +29,7 @@ server.get("/", (req, res) => {
 });
 
 //middlewares
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     const authHeader = req.get("Authorization");
     console.log("Authorization Header:", authHeader);
@@ -42,9 +44,20 @@ const auth = (req, res, next) => {
       return res.status(401).json({ error: "Token missing or malformed" });
     }
     const decoded = jwt.verify(token, process.env.SECRET);
-    console.log("Decoded Token:", decoded);
+    if(!decoded) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
 
-    req.user = decoded;
+    console.log("Decoded token:", decoded);
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    req.user = user;
+    console.log("User ID from token:", req.user);
+
     next();
   } catch (err) {
     if (err.name === "JsonWebTokenError") {
@@ -64,6 +77,8 @@ server.use('/api/auth', authRouter);
 server.use("/api/emails", auth, emailRouter);
 // server.use('/uploads', express.static('uploads'));
 server.use("/api/upload", uploadRouter);
+server.use("/api/shared-library", auth, sharedLibraryRouter);
+
 server.listen(process.env.PORT, () => {
   console.log('server started');
 })

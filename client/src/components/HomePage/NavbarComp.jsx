@@ -42,7 +42,7 @@ const NavbarComp = () => {
   return (
     <div>
       {/* NAVBAR SECTION */}
-      <nav className="flex justify-between items-center px-4 py-3 bg-white shadow-md">
+      <nav className="flex justify-between items-center px-6 py-4 bg-teal-700 shadow-md border-b border-teal-600">
         {/* Logo Section */}
         <div
           className="flex items-center space-x-2 cursor-pointer"
@@ -55,13 +55,15 @@ const NavbarComp = () => {
               className="object-cover"
             />
           </div>
-          <span className="text-xl font-semibold text-black">aDApt</span>
+          <span className="text-2xl text-white drop-shadow-md">
+            aDApt
+          </span>
         </div>
 
         {/* Dropdown Button */}
         <div className="relative">
           <button
-            className="px-4 py-2 bg-black text-white font-medium rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none flex items-center gap-2"
+            className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold text-md rounded-lg transition duration-300 shadow-md flex items-center gap-2 focus:outline-none"
             onClick={toggleMenu}
           >
             {isLoggedIn ? (
@@ -83,34 +85,28 @@ const NavbarComp = () => {
 
           {/* Dropdown Menu */}
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-xl rounded-sm z-50">
-              <ul className="flex flex-col divide-y divide-gray-200">
+            <div className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-10 z-50">
+              <ul className="divide-y divide-gray-200">
                 <li
-                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-yellow-50 cursor-pointer flex items-center gap-2 text-teal-700"
                   onClick={handleEmailsClick}
                 >
                   <Icons.MarkEmailUnread />
-                  <span className="block text-gray-800 font-medium">
-                    Imp Emails
-                  </span>
+                  <span className="font-medium">Imp Emails</span>
                 </li>
                 <li
-                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-yellow-50 cursor-pointer flex items-center gap-2 text-teal-700"
                   onClick={handlefeatures}
                 >
                   <Icons.Category />
-                  <span className="block text-gray-800 font-medium">
-                    Features
-                  </span>
+                  <span className="font-medium">Features</span>
                 </li>
                 <li
-                  className="hover:bg-gray-50 px-4 py-2 cursor-pointer flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-yellow-50 cursor-pointer flex items-center gap-2 text-teal-700"
                   onClick={handleLogout}
                 >
                   <Icons.Logout />
-                  <span className="block text-gray-800 font-medium">
-                    Logout
-                  </span>
+                  <span className="font-medium">Logout</span>
                 </li>
               </ul>
             </div>

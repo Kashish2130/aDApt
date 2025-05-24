@@ -1,42 +1,15 @@
-so hide the register button when i click on it using use location hook
-
-make sure that everything is RESPONSIVE
-
-change the color of the scrollbar
-
-whenever i am refreshing, the adminkey is being set to true why so?
-
-whenever i am refreshing, this is coming
-Uncaught SyntaxError: "undefined" is not valid JSON
-    at JSON.parse (<anonymous>)
-    at AuthContext.jsx:21:17
-    at mountState (chunk-TH7NCS4R.js?v=86180a56:12053:28)
-    at Object.useState (chunk-TH7NCS4R.js?v=86180a56:12593:24)
-    at useState (chunk-OU5AQDZK.js?v=86180a56:1066:29)
-    at AuthProvider (AuthContext.jsx:20:33)
-    at renderWithHooks (chunk-TH7NCS4R.js?v=86180a56:11596:26)
-    at mountIndeterminateComponent (chunk-TH7NCS4R.js?v=86180a56:14974:21)
-    at beginWork (chunk-TH7NCS4R.js?v=86180a56:15962:22)
-    at beginWork$1 (chunk-TH7NCS4R.js?v=86180a56:19806:22)  
-
-lost and found - edit functionalities not working properly (give qanda manager and say that do it like this)
-qna manager 
-shared resource - do this temporarily
-(do it all again)
-
-email should only be edited and deleted by admin
-
-auth middleware
-
-cloudinary url not working
-
-
-
 //new
-1. here what is happening is i have set an admin key in env varibles so if the admin key matches that then only the member becomes admin or else even though i add the admin key i would be a normal memeber only.
-2. email api not working - add and fetch and almost all the apis(some auth problem)
-3. edit and delete in emails is coming also if the member is normal so along with input box and add email button do conditional rendering on that too.
-4. run git status to see the remaining conflict and solve that manually
+//make the project as it its going to be live!
+-> here what is happening is i have set an admin key in env varibles so if the admin key matches that then only the member becomes admin or else even though i add the admin key i would be a normal memeber only.
+--------------------------------------------------------------------------------
+-> homepage container image
+-> framer motion - left in lost&found and q&a-manager
+-> features width & on hover dont change color or add button
+-> space below created by text in items in shared resource lib
+-> change the color of the scrollbar
+-> admin should be able to edit and delete any item - isAdmin && isOwner
+-> shared resource library working
+
 
 
 
