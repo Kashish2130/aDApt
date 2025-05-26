@@ -3,6 +3,8 @@ import { TextField, Button, MenuItem } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { Error } from "../components/ToastComp";
+import { Toaster } from "react-hot-toast";
 
 const Add_Edit_Item_Page = () => {
   const navigate = useNavigate();
@@ -20,8 +22,6 @@ const Add_Edit_Item_Page = () => {
 
   const token = sessionStorage.getItem("token");
 
-  console.log(item);
-  // ✅ Set values only on initial load for edit mode
   useEffect(() => {
     if (isEditMode && item && categories.length > 0) {
       setItemName(item.item || "");
@@ -86,11 +86,16 @@ const Add_Edit_Item_Page = () => {
       console.log("File uploaded successfully:", uploadedUrl);
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Failed to upload file");
+      Error("Failed to upload file. Please try again.");
     }
   };
 
   const handleSubmit = async () => {
+    if (!itemName || !description || !category || !resourceURL) {
+      Error("Please fill in all required fields.");
+      return;
+    }
+
     const payload = {
       item: itemName,
       description,
@@ -132,7 +137,8 @@ const Add_Edit_Item_Page = () => {
       transition={{ duration: 0.4 }}
     >
       <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gradient-to-br from-[#B1F0F7] via-[#F5F0CD] to-[#FADA7A]">
-        <div className="w-full max-w-3xl bg-white/70 backdrop-blur-lg rounded-lg shadow-2xl border border-[#81BFDA] p-10">
+        <Toaster />
+        <div className="w-full max-w-xl bg-white/70 backdrop-blur-lg rounded-lg shadow-2xl border border-[#81BFDA] p-10">
           <h2
             className="text-4xl text-center font-bold text-gray-800 mb-10"
             style={{
@@ -147,7 +153,11 @@ const Add_Edit_Item_Page = () => {
             <TextField
               fullWidth
               variant="outlined"
-              label="Item Name"
+              label={
+                <span>
+                  Item Name <span className="text-red-500">*</span>
+                </span>
+              }
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
               sx={{ backgroundColor: "white", borderRadius: "8px" }}
@@ -158,7 +168,11 @@ const Add_Edit_Item_Page = () => {
               multiline
               rows={3}
               variant="outlined"
-              label="Description"
+              label={
+                <span>
+                  Description <span className="text-red-500">*</span>
+                </span>
+              }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               sx={{ backgroundColor: "white", borderRadius: "8px" }}
@@ -168,7 +182,11 @@ const Add_Edit_Item_Page = () => {
               select
               fullWidth
               variant="outlined"
-              label="Category"
+              label={
+                <span>
+                  Category <span className="text-red-500">*</span>
+                </span>
+              }
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               sx={{ backgroundColor: "white", borderRadius: "8px" }}
@@ -180,46 +198,48 @@ const Add_Edit_Item_Page = () => {
               ))}
             </TextField>
 
-            <div className="flex gap-4" style={{ width: "100%" }}>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                accept="image/*,application/pdf,video/*"
-                style={{
-                  flexGrow: 1,
-                  padding: "10.5px 14px",
-                  borderRadius: "8px",
-                  border: "1px solid #c4c4c4",
-                  cursor: "pointer",
-                  backgroundColor: "white",
-                }}
-              />
-              <Button
-                variant="outlined"
-                onClick={handleUploadClick}
-                sx={{
-                  backgroundColor: "gray",
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "5px",
-                  minWidth: "120px",
-                  transition: "all 0.3s ease",
-                  ":hover": {
-                    transform: "scale(1.01)",
-                  },
-                }}
-              >
-                Upload
-              </Button>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">
+                Upload File <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*,application/pdf,video/*"
+                  style={{
+                    flexGrow: 1,
+                    padding: "10.5px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid #c4c4c4",
+                    cursor: "pointer",
+                    backgroundColor: "white",
+                  }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleUploadClick}
+                  sx={{
+                    backgroundColor: "gray",
+                    color: "white",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    minWidth: "120px",
+                    transition: "all 0.3s ease",
+                    ":hover": {
+                      transform: "scale(1.01)",
+                    },
+                  }}
+                >
+                  Upload
+                </Button>
+              </div>
             </div>
 
             {previewURL && (
               <div className="mt-4">
                 <p className="mb-2 font-semibold text-gray-700">Preview:</p>
-                {previewURL.includes(".png") ||
-                previewURL.includes(".jpg") ||
-                previewURL.includes(".jpeg") ||
-                previewURL.includes(".gif") ? (
+                {previewURL.match(/\.(png|jpg|jpeg|gif)$/i) ? (
                   <img
                     src={previewURL}
                     alt="Preview"

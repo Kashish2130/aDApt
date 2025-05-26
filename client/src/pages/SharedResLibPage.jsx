@@ -1,6 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Pencil, Save, X } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Pencil,
+  Save,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +22,7 @@ const SharedResLibPage = () => {
   const [showInput, setShowInput] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [editedCategoryName, setEditedCategoryName] = useState("");
+  const [sidebarExpanded, setSidebarExpanded] = useState(true); 
   const { isAdmin, userData } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
 
@@ -131,134 +140,159 @@ const SharedResLibPage = () => {
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="flex min-h-[calc(100vh-72px)]">
+      <div className="flex min-h-[calc(100vh-72px)] transition-all duration-300 ease-in-out">
         {/* Sidebar */}
-        <div className="w-64 h-auto bg-white shadow-xl border-r z-10">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-lg font-semibold">Categories</h2>
-            {isAdmin && (
-              <button
-                onClick={() => setShowInput((prev) => !prev)}
-                title="Add Category"
-                className="text-teal-600 hover:text-teal-800"
-              >
-                <Plus size={20} />
-              </button>
+        <motion.div
+          animate={{ width: sidebarExpanded ? 260 : 64 }}
+          transition={{ duration: 0.3 }}
+          className="relative bg-white shadow-xl border-r z-10 overflow-hidden"
+        >
+          {/* Toggle button */}
+          <button
+            onClick={() => setSidebarExpanded((prev) => !prev)}
+            className="absolute top-1/2 -right-2 transform -translate-y-1/2 z-30 px-1 py-2 bg-teal-600 border border-teal-700 shadow-md transition-all duration-200 hover:bg-teal-700 hover:scale-105 hover:shadow-lg"
+            title={sidebarExpanded ? "Collapse" : "Expand"}
+          >
+            {sidebarExpanded ? (
+              <ChevronLeft size={20} className="text-white" />
+            ) : (
+              <ChevronRight size={20} className="text-white" />
             )}
-          </div>
+          </button>
 
-          {isAdmin && showInput && (
-            <div className="p-4">
-              <input
-                type="text"
-                className="border px-2 py-1 w-full rounded"
-                placeholder="Enter category name"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddCategory();
-                  if (e.key === "Escape") {
-                    setShowInput(false);
-                    setNewCategoryName("");
-                  }
-                }}
-                autoFocus
-              />
-              <button
-                onClick={handleAddCategory}
-                className="mt-2 w-full bg-teal-600 text-white py-1 rounded hover:bg-teal-700"
-              >
-                Add
-              </button>
-            </div>
-          )}
-
-          <ul className="space-y-1 px-2 py-2">
-            {categories.map((cat) => (
-              <li
-                key={cat._id}
-                className={`group flex justify-between items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition hover:bg-teal-100 ${
-                  selectedCategory === cat._id
-                    ? "bg-teal-200 font-semibold"
-                    : ""
-                }`}
-                onClick={() => setSelectedCategory(cat._id)}
-              >
-                <div className="flex-1 min-w-0">
-                  {isAdmin && editingCategoryId === cat._id ? (
-                    <input
-                      type="text"
-                      value={editedCategoryName}
-                      onChange={(e) => setEditedCategoryName(e.target.value)}
-                      className="w-full px-2 py-1 border rounded text-sm"
-                      autoFocus
-                    />
-                  ) : (
-                    <span className="block truncate text-sm">{cat.name}</span>
-                  )}
-                </div>
-
+          {sidebarExpanded && (
+            <>
+              <div className="flex justify-between items-center p-4 border-b">
+                <h2 className="text-lg font-semibold">Categories</h2>
                 {isAdmin && (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {editingCategoryId === cat._id ? (
-                      <>
-                        <button
-                          title="Save"
-                          className="p-1 rounded text-green-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            updateCategory(cat._id, editedCategoryName);
-                            setEditingCategoryId(null);
-                          }}
-                        >
-                          <Save size={18} />
-                        </button>
-                        <button
-                          title="Cancel"
-                          className="p-1 rounded text-red-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingCategoryId(null);
-                            setEditedCategoryName("");
-                          }}
-                        >
-                          <X size={18} />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          title="Edit"
-                          className="p-1 rounded text-gray-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingCategoryId(cat._id);
-                            setEditedCategoryName(cat.name);
-                          }}
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          title="Delete"
-                          className="p-1 rounded text-red-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteCategory(cat._id);
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  <button
+                    onClick={() => setShowInput((prev) => !prev)}
+                    title="Add Category"
+                    className="text-teal-600 hover:text-teal-800"
+                  >
+                    <Plus size={20} />
+                  </button>
                 )}
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+
+              {isAdmin && showInput && (
+                <div className="p-4">
+                  <input
+                    type="text"
+                    className="border px-2 py-1 w-full rounded"
+                    placeholder="Enter category name"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAddCategory();
+                      if (e.key === "Escape") {
+                        setShowInput(false);
+                        setNewCategoryName("");
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleAddCategory}
+                    className="mt-2 w-full bg-teal-600 text-white py-1 rounded hover:bg-teal-700"
+                  >
+                    Add
+                  </button>
+                </div>
+              )}
+
+              <ul className="space-y-1 px-2 py-2">
+                {categories.map((cat) => (
+                  <li
+                    key={cat._id}
+                    className={`group flex justify-between items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition hover:bg-teal-100 ${
+                      selectedCategory === cat._id
+                        ? "bg-teal-200 font-semibold"
+                        : ""
+                    }`}
+                    onClick={() => setSelectedCategory(cat._id)}
+                  >
+                    <div className="flex-1 min-w-0">
+                      {isAdmin && editingCategoryId === cat._id ? (
+                        <input
+                          type="text"
+                          value={editedCategoryName}
+                          onChange={(e) =>
+                            setEditedCategoryName(e.target.value)
+                          }
+                          className="w-full px-2 py-1 border rounded text-sm"
+                          autoFocus
+                        />
+                      ) : (
+                        <span className="block truncate text-sm">
+                          {cat.name}
+                        </span>
+                      )}
+                    </div>
+
+                    {isAdmin && (
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {editingCategoryId === cat._id ? (
+                          <>
+                            <button
+                              title="Save"
+                              className="p-1 rounded text-green-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateCategory(cat._id, editedCategoryName);
+                                setEditingCategoryId(null);
+                              }}
+                            >
+                              <Save size={18} />
+                            </button>
+                            <button
+                              title="Cancel"
+                              className="p-1 rounded text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingCategoryId(null);
+                                setEditedCategoryName("");
+                              }}
+                            >
+                              <X size={18} />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              title="Edit"
+                              className="p-1 rounded text-gray-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingCategoryId(cat._id);
+                                setEditedCategoryName(cat.name);
+                              }}
+                            >
+                              <Pencil size={16} />
+                            </button>
+                            <button
+                              title="Delete"
+                              className="p-1 rounded text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteCategory(cat._id);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 transition-all duration-300">
           <div className="flex justify-between mb-4">
             <h1 className="text-2xl font-bold text-teal-800">
               Shared Resource Library
@@ -284,8 +318,8 @@ const SharedResLibPage = () => {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
                 {(Array.isArray(items) ? items : []).map((item) => {
-                  const isOwner =
-                    item.createdBy?.fullname === userData?.fullname;
+                  const isOwnerOrAdmin =
+                    item.createdBy?.fullname === userData?.fullname || isAdmin;
 
                   return (
                     <motion.div
@@ -296,7 +330,7 @@ const SharedResLibPage = () => {
                       <div>
                         <h3 className="font-semibold text-lg flex justify-between items-start gap-2">
                           <span>{item.item || "Untitled Resource"}</span>
-                          {isOwner && (
+                          {isOwnerOrAdmin && (
                             <span className="flex gap-1">
                               <button
                                 title="Edit"
