@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
-import { Pencil, Trash2, Check, X, Mail } from "lucide-react";
+import { Pencil, Trash2, Check, X, Mail, Copy } from "lucide-react";
 import { motion } from "framer-motion";
+import { Toaster, toast } from "react-hot-toast";
 
 const ImpEmailsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -109,6 +110,24 @@ const ImpEmailsPage = () => {
     }
   };
 
+  // Add a function to copy email to clipboard
+  const copyToClipboard = (email) => {
+    if (navigator && navigator.clipboard) {
+      navigator.clipboard.writeText(email).then(() => {
+        toast.success("Copied to clipboard");
+      });
+    } else {
+      // fallback for older browsers
+      const textarea = document.createElement("textarea");
+      textarea.value = email;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      toast.success("Copied to clipboard");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -116,6 +135,7 @@ const ImpEmailsPage = () => {
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.4 }}
     >
+      <Toaster />
       <div className="min-h-screen bg-[#F5F0CD] p-6 m-[15px] shadow-lg">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -224,6 +244,14 @@ const ImpEmailsPage = () => {
                     <div className="flex items-center text-gray-700">
                       <Mail className="h-4 w-4 mr-2 text-[#81BFDA]" />
                       <span>{email.emailId}</span>
+                      <button
+                        onClick={() => copyToClipboard(email.emailId)}
+                        title="Copy Email"
+                        className="ml-2 p-1 rounded hover:bg-gray-100"
+                        style={{ lineHeight: 0 }}
+                      >
+                        <Copy className="h-4 w-4 text-gray-500 hover:text-blue-600" />
+                      </button>
                     </div>
                     {isAdmin && (
                       <div className="flex justify-end gap-2 mt-4">

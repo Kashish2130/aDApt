@@ -6,6 +6,7 @@ import cors from "cors";
 import authRouter from "./routes/authRoute.js";
 import uploadRouter from './routes/uploadRoute.js';
 import sharedLibraryRouter from "./routes/sharedResLibRoute.js";
+import qnaRouter from "./routes/qnaRoute.js"; 
 import jwt from "jsonwebtoken";
 import User from "./models/userModel.js";
 
@@ -78,7 +79,7 @@ server.use("/api/emails", auth, emailRouter);
 // server.use('/uploads', express.static('uploads'));
 server.use("/api/upload", uploadRouter);
 server.use("/api/shared-library", auth, sharedLibraryRouter);
-
+server.use("/api/qna",auth, qnaRouter);
 server.listen(process.env.PORT, () => {
   console.log('server started');
 })

@@ -14,9 +14,9 @@ const HomePage = () => {
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#B1F0F7] via-[#F5F0CD] to-[#FADA7A]">
         {/* IMAGE SLIDER SECTION */}
-        <div className="relative w-full overflow-hidden h-[400px] mt-12"> //! alternative in remaining file
+        {/* {/* <div className="relative w-full overflow-hidden h-[400px] mt-12"> //! alternative in remaining file
           <div className="absolute top-0 left-0 flex animate-scroll-banner w-[200%]"> //! alternative in remaining file
             <motion.div
               className="flex"
@@ -28,9 +28,9 @@ const HomePage = () => {
                 ease: "linear",
               }}
               style={{ width: "200%" }}
-            >
+            > */}
               {/* Repeating the same image twice for looping */}
-              <img
+              {/* <img
                 src={imageUrl}
                 alt="Study Plan Banner"
                 className="w-1/2 h-[400px] object-cover"
@@ -42,13 +42,13 @@ const HomePage = () => {
               />
             </motion.div>
           </div>
-        </div>
+        </div> */}
 
         {/* MAIN CONTENT SECTION */}
         <div className="flex-grow flex items-center justify-center px-6 py-10">
           <main
             id="about"
-            className="bg-white/60 backdrop-blur-md rounded-xl p-12 shadow-2xl border border-[#81BFDA] max-w-7xl w-full max-w-6xl mx-auto bg-gradient-to-br from-[#B1F0F7] via-[#F5F0CD] to-[#FADA7A]"
+            className="bg-white/60 backdrop-blur-md rounded-xl p-12 shadow-2xl border border-[#81BFDA] max-w-7xl w-full max-w-6xl mx-auto bg-white"
           >
             <h2
               className="text-4xl font-bold mb-6 text-center text-[#1A202C]"

@@ -22,7 +22,7 @@ const SharedResLibPage = () => {
   const [showInput, setShowInput] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [editedCategoryName, setEditedCategoryName] = useState("");
-  const [sidebarExpanded, setSidebarExpanded] = useState(true); 
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const { isAdmin, userData } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
 
@@ -325,7 +325,7 @@ const SharedResLibPage = () => {
                     <motion.div
                       key={item._id}
                       whileHover={{ scale: 1.02 }}
-                      className="p-4 border rounded-lg shadow bg-white flex flex-col justify-between transition-all duration-300 ease-in-out hover:shadow-lg hover:border-teal-300 hover:bg-teal-50"
+                      className="cursor-pointer p-4 border rounded-lg shadow bg-white flex flex-col justify-between transition-all duration-300 ease-in-out hover:shadow-lg hover:border-teal-300 hover:bg-teal-50"
                     >
                       <div>
                         <h3 className="font-semibold text-lg flex justify-between items-start gap-2">

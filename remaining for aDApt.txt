@@ -1,22 +1,17 @@
 //new
 //make the project as it its going to be live!
+
+NOTE :
 -> here what is happening is i have set an admin key in env varibles so if the admin key matches that then only the member becomes admin or else even though i add the admin key i would be a normal memeber only.
 --------------------------------------------------------------------------------
--> homepage container image
--> framer motion - left in lost&found and q&a-manager
--> features width & on hover dont change color or add button
--> space below created by text in items in shared resource lib
--> change the color of the scrollbar
 
+-> posted at not working - becuase database does not have createdAt field in questions schema
+//this is because the fields which are getting added has that(automatically from the controller but manually added data does not have that)
+-> how to remove uploaded image. in edit
 
-REPLACE THIS !!
-        {/* IMAGE SLIDER SECTION */}
-        <div className="relative w-full overflow-hidden h-[400px] mt-12">
-          <div className="absolute top-0 left-0 flex animate-scroll-banner w-[200%]">
-            
-WITH THIS CODE !!
-<div className="w-full max-w-[1400px] mx-auto mt-12 px-6">
-          <div className="overflow-hidden rounded-2xl shadow-xl h-[400px]">
+//extra feature
+-> rearrange questions and items from thier places.
+
 
 
 

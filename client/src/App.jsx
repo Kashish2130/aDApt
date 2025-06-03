@@ -11,6 +11,7 @@ import LostNFoundPage from "./pages/LostNFoundPage";
 import QNAManagerPage from "./pages/QNAManagerPage";
 import SharedResLibPage from "./pages/SharedResLibPage";
 import Add_Edit_Item_Page from "./pages/Add_Edit_Item_Page";
+import Add_Edit_Question_Page from "./pages/Add_Edit_Question_Page";
 
 const App = () => {
   return (
@@ -27,6 +28,10 @@ const App = () => {
           <Route path="/QnA" element={<QNAManagerPage />} />
           <Route path="/sharedreslib" element={<SharedResLibPage />} />
           <Route path="/add-edit-item" element={<Add_Edit_Item_Page />} />
+          <Route
+            path="/add-edit-question"
+            element={<Add_Edit_Question_Page />}
+          />
         </Routes>
       </AnimatePresence>
     </BrowserRouter>

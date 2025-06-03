@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion"; // Import motion for animations
+import { motion } from "framer-motion";
+import { MoveRight, MoveLeft } from "lucide-react"; // Import motion for animations
 
 const FeaturesPage = () => {
   const navigate = useNavigate();
@@ -38,9 +39,9 @@ const FeaturesPage = () => {
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
         <div className="absolute bottom-0 left-20 w-[400px] h-[400px] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
 
-        <div className="relative max-w-6xl mx-auto py-20 px-6 space-y-16 z-10">
+        <div className="relative max-w-[1300px] mx-auto py-20 px-6 space-y-16 z-10">
           {/* Shared Resource Library */}
-          <div className="backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
+          <div className="w-full backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
             <div
               className="md:w-1/2 cursor-pointer"
               onClick={handleSharedResLib}
@@ -53,7 +54,7 @@ const FeaturesPage = () => {
             </div>
             <div className="md:w-1/2 space-y-4">
               <h2
-                className="text-3xl font-bold text-gray-800 cursor-pointer hover:text-blue-600"
+                className="text-3xl font-bold text-gray-800 cursor-pointer"
                 onClick={handleSharedResLib}
               >
                 Shared Resource Library
@@ -63,11 +64,18 @@ const FeaturesPage = () => {
                 and materials with your team or community, promoting
                 collaboration and efficiency.
               </p>
+              <button
+                onClick={handleSharedResLib}
+                className="mt-2 px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold shadow hover:bg-teal-700 transition flex items-center gap-2"
+              >
+                Go to Shared Resource Library
+                <MoveRight className="w-5 h-5 ml-2" />
+              </button>
             </div>
           </div>
 
           {/* Q&A Manager */}
-          <div className="backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row-reverse items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
+          <div className="w-full backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row-reverse items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
             <div className="md:w-1/2 cursor-pointer" onClick={handleQnA}>
               <img
                 src="https://res.cloudinary.com/dzijmh8dz/image/upload/v1747327516/Blue_and_Orange_Geometric_Q_A_Youtube_Thumbnail_qg48ic.png"
@@ -77,7 +85,7 @@ const FeaturesPage = () => {
             </div>
             <div className="md:w-1/2 space-y-4">
               <h2
-                className="text-3xl font-bold text-gray-800 cursor-pointer hover:text-blue-600"
+                className="text-3xl font-bold text-gray-800 cursor-pointer"
                 onClick={handleQnA}
               >
                 Q&A Manager
@@ -87,11 +95,18 @@ const FeaturesPage = () => {
                 ensuring seamless communication and resolution of queries within
                 your group.
               </p>
+              <button
+                onClick={handleQnA}
+                className="mt-2 px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold shadow hover:bg-teal-700 transition flex items-center gap-2"
+              >
+                Go to Q&A Manager
+                <MoveRight className="w-5 h-5 ml-2" />
+              </button>
             </div>
           </div>
 
           {/* Lost and Found Manager */}
-          <div className="backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
+          <div className="w-full backdrop-blur-md bg-white/60 shadow-xl rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 hover:scale-[1.01] transition-transform duration-300">
             <div className="md:w-1/2 cursor-pointer" onClick={handlelostNfound}>
               <img
                 src="https://res.cloudinary.com/dzijmh8dz/image/upload/v1747749326/Red_Yellow_Creative_Minimalist_Restaurant_Banner_Horizontal_uxjnjz.png"
@@ -101,7 +116,7 @@ const FeaturesPage = () => {
             </div>
             <div className="md:w-1/2 space-y-4">
               <h2
-                className="text-3xl font-bold text-gray-800 cursor-pointer hover:text-blue-600"
+                className="text-3xl font-bold text-gray-800 cursor-pointer"
                 onClick={handlelostNfound}
               >
                 Lost & Found Manager
@@ -111,6 +126,13 @@ const FeaturesPage = () => {
                 reunite lost belongings with their rightful owners quickly and
                 effectively.
               </p>
+              <button
+                onClick={handlelostNfound}
+                className="mt-2 px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold shadow hover:bg-teal-700 transition flex items-center gap-2"
+              >
+                <MoveLeft className="w-5 h-5 mr-2" />
+                Go to Lost & Found Manager
+              </button>
             </div>
           </div>
         </div>

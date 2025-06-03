@@ -65,7 +65,7 @@ const createSharedItem = async (req, res) => {
       description,
       resourceURL,
       category,
-      createdBy : req.user._id, // use authenticated user's ID
+      createdBy: req.user._id, // use authenticated user's ID
     });
     await newItem.save();
     res.status(201).json(newItem);
