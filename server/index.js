@@ -7,6 +7,7 @@ import authRouter from "./routes/authRoute.js";
 import uploadRouter from './routes/uploadRoute.js';
 import sharedLibraryRouter from "./routes/sharedResLibRoute.js";
 import qnaRouter from "./routes/qnaRoute.js"; 
+import lostAndFoundRouter from "./routes/lnfRoute.js";
 import jwt from "jsonwebtoken";
 import User from "./models/userModel.js";
 
@@ -70,16 +71,27 @@ const auth = async (req, res, next) => {
   }
 };
 
+//cors is used to allow cross-origin requests
+// it is used to allow requests from different ports
 server.use(cors());
+
+//for parsing data which is coming through the json body
 server.use(express.json());
+
 //for parsing data which is coming through the form data // here it is for files |
 server.use(express.urlencoded({ extended: true }));
+
+//Routes
 server.use('/api/auth', authRouter);
 server.use("/api/emails", auth, emailRouter);
 // server.use('/uploads', express.static('uploads'));
-server.use("/api/upload", uploadRouter);
+server.use("/api/upload", auth, uploadRouter);
 server.use("/api/shared-library", auth, sharedLibraryRouter);
-server.use("/api/qna",auth, qnaRouter);
+server.use("/api/qna", auth , qnaRouter);
+server.use("/api/lostnfound", auth, lostAndFoundRouter);
+
+
+
 server.listen(process.env.PORT, () => {
   console.log('server started');
 })

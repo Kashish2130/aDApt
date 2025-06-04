@@ -5,6 +5,8 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Error } from "../components/ToastComp";
 import { Toaster } from "react-hot-toast";
+import Lottie from "lottie-react";
+import uploadLoader from "../assets/upload-loader.json"; // Download from lottiefiles
 
 const Add_Edit_Item_Page = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const Add_Edit_Item_Page = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resourceURL, setResourceURL] = useState("");
   const [previewURL, setPreviewURL] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const token = sessionStorage.getItem("token");
 
@@ -64,6 +67,11 @@ const Add_Edit_Item_Page = () => {
   };
 
   const handleUploadClick = async () => {
+    if (!selectedFile) {
+      Error("Please select a file to upload.");
+      return;
+    }
+    setUploading(true);
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -83,8 +91,10 @@ const Add_Edit_Item_Page = () => {
         res.data.url || res.data.resourceURL || res.data.fileUrl;
       setResourceURL(uploadedUrl);
       setPreviewURL(uploadedUrl);
+      setUploading(false);
       console.log("File uploaded successfully:", uploadedUrl);
     } catch (err) {
+      setUploading(false);
       console.error("Upload error:", err);
       Error("Failed to upload file. Please try again.");
     }
@@ -136,7 +146,7 @@ const Add_Edit_Item_Page = () => {
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gradient-to-br from-[#B1F0F7] via-[#F5F0CD] to-[#FADA7A]">
+      <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gradient-to-br from-[#B1F0F7] via-[#F5F0CD] to-[#FADA7A] h-full w-full">
         <Toaster />
         <div className="w-full max-w-xl bg-white/70 backdrop-blur-lg rounded-lg shadow-2xl border border-[#81BFDA] p-10">
           <h2
@@ -202,37 +212,37 @@ const Add_Edit_Item_Page = () => {
               <label className="text-sm font-medium">
                 Upload File <span className="text-red-500">*</span>
               </label>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-stretch">
                 <input
                   type="file"
                   onChange={handleFileChange}
                   accept="image/*,application/pdf,video/*"
-                  style={{
-                    flexGrow: 1,
-                    padding: "10.5px 14px",
-                    borderRadius: "8px",
-                    border: "1px solid #c4c4c4",
-                    cursor: "pointer",
-                    backgroundColor: "white",
-                  }}
+                  className="flex-1 p-2 rounded-md border border-gray-300 bg-white"
+                  style={{ minWidth: 0 }}
                 />
-                <Button
-                  variant="outlined"
-                  onClick={handleUploadClick}
-                  sx={{
-                    backgroundColor: "gray",
-                    color: "white",
-                    fontWeight: "bold",
-                    borderRadius: "5px",
-                    minWidth: "120px",
-                    transition: "all 0.3s ease",
-                    ":hover": {
-                      transform: "scale(1.01)",
-                    },
-                  }}
-                >
-                  Upload
-                </Button>
+                {uploading ? (
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <Lottie animationData={uploadLoader} loop={true} />
+                  </div>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    onClick={handleUploadClick}
+                    sx={{
+                      backgroundColor: "gray",
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      minWidth: "120px",
+                      transition: "all 0.3s ease",
+                      ":hover": {
+                        transform: "scale(1.01)",
+                      },
+                    }}
+                  >
+                    Upload
+                  </Button>
+                )}
               </div>
             </div>
 

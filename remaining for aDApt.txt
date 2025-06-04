@@ -12,10 +12,38 @@ NOTE :
 //extra feature
 -> rearrange questions and items from thier places.
 
+-> check for duplicate category name
 
+// Optionally, check for duplicate category name
+    const existingCategory = await LostAndFoundCategory.findOne({ name });
+    if (existingCategory) {
+        return res.status(400).json({ error: "Category name already exists" });
+    }
 
+-> the expanding side bar button is 1/2 in height so fix that
 
+-> arrow icon features page
 
+-> default selected category
+
+-> sidebar changes
+
+-> chat 
+-> socket.io
+
+-> small bugs in responsiveness
+
+-> optimization
+
+-> deployement
+
+-> component libraries
+
+-> sign up with google
+
+-> search
+
+-> chat with AI
 
 
 

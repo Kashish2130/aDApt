@@ -9,15 +9,19 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageCircle, // Chat icon
+  Copy,
 } from "lucide-react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const QNAManagerPage = () => {
+const LnFPage = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [questions, setQuestions] = useState([]);
+
+  const [items, setItems] = useState("");
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [showInput, setShowInput] = useState(false);
@@ -31,9 +35,12 @@ const QNAManagerPage = () => {
   const fetchCategories = async () => {
     //*DONE
     try {
-      const res = await axios.get("http://localhost:5000/api/qna/categories", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/lostnfound/categories",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCategories(res.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -46,7 +53,7 @@ const QNAManagerPage = () => {
     if (!newCategoryName.trim()) return;
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/qna/category",
+        "http://localhost:5000/api/lostnfound/category",
         { name: newCategoryName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +68,7 @@ const QNAManagerPage = () => {
   // Navigate to add question page
   const createQuestion = () => {
     //*DONE
-    navigate("/add-edit-question");
+    navigate("/add-edit-lnf-item");
   };
 
   // Update category
@@ -70,7 +77,7 @@ const QNAManagerPage = () => {
     if (!newName.trim()) return;
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/qna/category/${id}`,
+        `http://localhost:5000/api/lostnfound/category/${id}`,
         { name: newName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -83,30 +90,34 @@ const QNAManagerPage = () => {
   };
 
   // Navigate to edit question page
-  const handleEditItem = (question) => {
+  const handleEditItem = (item) => {
+    // For Lost & Found: navigate to edit page with item data
     //*DONE
-    navigate("/add-edit-question", {
+    navigate("/add-edit-lnf-item", {
       state: {
-        questionId: question._id,
-        questionData: question,
+        itemId: item._id,
+        itemData: item,
         isEditMode: true,
       },
     });
-    console.log("Editing question:", question);
+    console.log("Editing item:", item);
   };
 
   // Delete category
   const deleteCategory = async (id) => {
     //*DONE
     try {
-      await axios.delete(`http://localhost:5000/api/qna/category/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `http://localhost:5000/api/lostnfound/category/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCategories((prev) => prev.filter((cat) => cat._id !== id));
-      // If deleted category was selected, clear questions and selectedCategory
+      // If deleted category was selected, clear items and selectedCategory
       if (selectedCategory === id) {
         setSelectedCategory(null);
-        setQuestions([]);
+        setItems([]);
       }
     } catch (err) {
       console.error("Error deleting category:", err);
@@ -117,29 +128,32 @@ const QNAManagerPage = () => {
   const handleDeleteItem = async (itemId) => {
     //*DONE
     try {
-      await axios.delete(`http://localhost:5000/api/qna/question/${itemId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setQuestions((prev) => prev.filter((item) => item._id !== itemId));
+      await axios.delete(
+        `http://localhost:5000/api/lostnfound/item/${itemId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setItems((prev) => prev.filter((item) => item._id !== itemId));
     } catch (err) {
-      console.error("Error deleting question:", err);
+      console.error("Error deleting item:", err);
     }
   };
 
   // Fetch questions for selected category
-  const fetchQuestionsByCategory = async (categoryId) => {
+  const fetchItemsByCategory = async (categoryId) => {
     //*DONE
     if (!categoryId) return;
     try {
       console.log("hey this is category id:", categoryId);
       const res = await axios.get(
-        `http://localhost:5000/api/qna/category/${categoryId}/questions`,
+        `http://localhost:5000/api/lostnfound/category/${categoryId}/items`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setQuestions(res.data);
+      setItems(res.data);
       console.log(res.data);
     } catch (err) {
-      console.error("Error fetching questions:", err);
+      console.error("Error fetching items:", err);
     }
   };
 
@@ -150,8 +164,8 @@ const QNAManagerPage = () => {
 
   useEffect(() => {
     //*DONE
-    if (selectedCategory) fetchQuestionsByCategory(selectedCategory);
-    else setQuestions([]);
+    if (selectedCategory) fetchItemsByCategory(selectedCategory);
+    else setItems([]);
   }, [selectedCategory]);
 
   // Format posted date nicely
@@ -167,12 +181,12 @@ const QNAManagerPage = () => {
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="flex min-h-[calc(100vh-72px)] transition-all duration-300 ease-in-out">
+      <div className="flex h-[calc(100vh-72px)] transition-all duration-300 ease-in-out">
         {/* Sidebar */}
         <motion.div
           animate={{ width: sidebarExpanded ? 260 : 64 }}
           transition={{ duration: 0.3 }}
-          className="relative bg-white shadow-xl border-r z-10 overflow-hidden"
+          className="relative bg-white shadow-xl border-r z-10 overflow-auto"
         >
           {/* Toggle button */}
           <button
@@ -323,19 +337,19 @@ const QNAManagerPage = () => {
         {/* Main content */}
         <div className="flex-1 p-6 transition-all duration-300">
           <div className="flex justify-between mb-4">
-            <h1 className="text-2xl font-bold text-teal-800">Q&A Manager</h1>
+            <h1 className="text-2xl font-bold text-teal-800">
+              Lost & Found Manager
+            </h1>
             <button
               onClick={createQuestion}
               className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
             >
-              <Plus size={20} /> Add Question
+              <Plus size={20} /> Add Item
             </button>
           </div>
 
           {!selectedCategory ? (
-            <p className="text-gray-500">
-              Select a category to view questions.
-            </p>
+            <p className="text-gray-500">Select a category to view items.</p>
           ) : (
             <AnimatePresence mode="wait">
               <motion.div
@@ -346,17 +360,17 @@ const QNAManagerPage = () => {
                 transition={{ duration: 0.4 }}
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
               >
-                {(Array.isArray(questions) ? questions : []).map((question) => {
+                {(Array.isArray(items) ? items : []).map((item) => {
                   const user = JSON.parse(sessionStorage.getItem("user"));
-                  const isOwner = question.createdBy?._id === user?._id;
+                  const isOwner = item.createdBy?._id === user?._id;
                   const handleCardClick = () => {
-                    if (question.photo) {
-                      window.open(question.photo, "_blank");
+                    if (item.photo) {
+                      window.open(item.photo, "_blank");
                     }
                   };
                   return (
                     <motion.div
-                      key={question._id}
+                      key={item._id}
                       whileHover={{ scale: 1.02 }}
                       className="relative cursor-pointer p-4 pb-10 border rounded-lg shadow bg-white flex flex-col justify-between transition-all duration-300 ease-in-out hover:shadow-lg hover:border-teal-300 hover:bg-teal-50"
                       onClick={handleCardClick}
@@ -364,67 +378,81 @@ const QNAManagerPage = () => {
                       {/* Photo */}
                       <div className="h-40 w-full rounded-md overflow-hidden mb-3">
                         <img
-                          src={question.photo}
-                          alt="Question"
+                          src={item.photo}
+                          alt="item"
                           className="object-cover w-full h-full"
                         />
                       </div>
 
                       {/* title */}
                       <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">
-                        {question.question}
+                        {item.item}
                       </h3>
 
                       <p className="text-sm text-gray-600 mt-1">
-                        {question.description || "No description provided"}
+                        {item.description || "No description provided"}
                       </p>
 
                       {/* Details */}
                       <div className="flex flex-col flex-1">
                         <p className="text-sm font-medium text-gray-800 truncate mt-1 mb-1">
-                          Created By:{" "}
+                          Created By: {" "}
                           <span className="font-normal">
-                            {question.createdBy?.fullname || "Unknown"}
+                            {item.createdBy?.fullname || "Unknown"}
                           </span>
                         </p>
-
+                        <div className="flex items-center mb-1">
+                          <span className="text-sm text-gray-800 mr-2">Contact:</span>
+                          {item.contact ? (
+                            <span className="inline-flex items-center bg-teal-50 border border-teal-200 text-teal-700 px-2 py-0.5 rounded font-medium text-sm shadow-sm">
+                              <span className="mr-1 select-all">{item.contact}</span>
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  navigator.clipboard.writeText(item.contact);
+                                  toast.success("Copied to clipboard");
+                                }}
+                                className="p-1 rounded-full hover:bg-teal-100 transition"
+                                title="Copy contact to clipboard"
+                                style={{ lineHeight: 0 }}
+                              >
+                                <Copy size={15} className="text-teal-600" />
+                              </button>
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 italic">-</span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600 mb-1">
-                          Status:{" "}
+                          Status: {" "}
                           <span
                             className={`font-semibold ${
-                              question.answered
-                                ? "text-green-600"
-                                : "text-red-600"
+                              item.isFound ? "text-green-600" : "text-red-600"
                             }`}
                           >
-                            {question.answered ? "Answered" : "Unanswered"}
+                            {item.isFound ? "Found" : "Not Found"}
                           </span>
                         </p>
-
-                        <p className="text-sm text-gray-500">
-                          Posted At: {formatDate(question.createdAt)}
-                        </p>
+                        {item.isFound && item.foundAt && (
+                          <p className="text-xs text-gray-500 mb-1">
+                            Found At: {formatDate(item.foundAt)}
+                          </p>
+                        )}
                       </div>
 
                       {/* Icons - bottom right */}
                       {(isAdmin || isOwner) && (
                         <div className="absolute bottom-3 right-3 flex gap-2">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditItem(question);
-                            }}
-                            title="Edit Question"
+                            onClick={e => { e.stopPropagation(); handleEditItem(item); }}
+                            title="Edit item"
                             className="p-1 rounded text-gray-600 hover:text-teal-600 transition"
                           >
                             <Pencil size={18} />
                           </button>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteItem(question._id);
-                            }}
-                            title="Delete Question"
+                            onClick={e => { e.stopPropagation(); handleDeleteItem(item._id); }}
+                            title="Delete item"
                             className="p-1 rounded text-red-600 hover:text-red-700 transition"
                           >
                             <Trash2 size={18} />
@@ -447,4 +475,4 @@ const QNAManagerPage = () => {
   );
 };
 
-export default QNAManagerPage;
+export default LnFPage;

@@ -8,21 +8,22 @@ import { Toaster } from "react-hot-toast";
 import Lottie from "lottie-react";
 import uploadLoader from "../assets/upload-loader.json"; // Download from lottiefiles
 
-const Add_Edit_Question_Page = () => {
+const Add_Edit_LnF_Page = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // Extract questionId, questionData, and isEditMode from location.state for Add/Edit Question functionality
-  const {
-    questionId: id,
-    questionData: question,
-    isEditMode,
-  } = location.state || {};
+  // Extract lostItemId, lostItemData, and isEditMode from location.state for Add/Edit Lost & Found Item functionality
+  const { itemId: id, itemData: item, isEditMode } = location.state || {};
 
-  const [questionName, setQuestionName] = useState(""); // for question text
+  // For backward compatibility, use 'lostItem' instead of 'question'
+  //add the state variables acc to lost and found item requirements
+  const [itemName, setItemName] = useState(""); // for item name
+  const [contact, setContact] = useState(""); // for contact information
+  const [isFound, setIsFound] = useState(false); // for found status
+  const [foundAt, setFoundAt] = useState(null); // for found date
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [answered, setAnswered] = useState(false); // for answered status
   const [selectedFile, setSelectedFile] = useState(null);
   const [photo, setphoto] = useState(""); //for question photo URL
   const [previewURL, setPreviewURL] = useState(null);
@@ -33,34 +34,42 @@ const Add_Edit_Question_Page = () => {
   //edit the below useEffect to set initial values for questionName, description, category, and photo and answered status
 
   useEffect(() => {
-    if (isEditMode && question && categories.length > 0) {
-      setQuestionName(question.question || "");
-      setDescription(question.description || "");
+    // Prefill all fields for Lost & Found item in edit mode
+    if (isEditMode && item && categories.length > 0) {
+      setItemName(item.item || "");
+      setDescription(item.description || "");
+      setContact(item.contact || "");
+      setIsFound(!!item.isFound);
+      setFoundAt(item.foundAt || null);
       const matchedCategory = categories.find(
-        (cat) => cat._id === (question.category?._id || question.category)
+        (cat) => cat._id === (item.category?._id || item.category)
       );
       setCategory(matchedCategory?._id || "");
-      if (question.photo) {
-        setphoto(question.photo);
-        setPreviewURL(question.photo);
+      if (item.photo) {
+        setphoto(item.photo);
+        setPreviewURL(item.photo);
       }
-      setAnswered(!!question.answered);
     } else if (!isEditMode) {
-      setQuestionName("");
+      setItemName("");
       setDescription("");
+      setContact("");
       setCategory("");
       setphoto("");
       setPreviewURL(null);
-      setAnswered(false);
+      setIsFound(false);
+      setFoundAt(null);
     }
-  }, [isEditMode, question, categories]);
+  }, [isEditMode, item, categories]);
 
   const fetchCategories = async () => {
     //* DONE
     try {
-      const res = await axios.get("http://localhost:5000/api/qna/categories", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/lostnfound/categories",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCategories(res.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -167,48 +176,51 @@ const Add_Edit_Question_Page = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!questionName || !description || !category) {
-      Error("Please fill in all required fields.");
-      return;
+const handleSubmit = async () => {
+    // Validate required fields for lost and found item
+    if (!itemName || !description || !category || !contact) {
+        Error("Please fill in all required fields.");
+        return;
     }
 
     // Only include photo if it is not empty
     const payload = {
-      question: questionName,
-      description,
-      category,
-      answered,
-      // For edit mode, if photo is null, include it in the payload
-      ...(photo === null
-        ? { photo: null }
-        : photo && photo.trim() !== ""
-        ? { photo }
-        : {}),
+        item: itemName,
+        description,
+        category,
+        contact,
+        isFound,
+        // Optionally include foundAt if item is marked as found
+        ...(isFound && foundAt ? { foundAt } : {}),
+        ...(photo === null
+            ? { photo: null }
+            : photo && photo.trim() !== ""
+            ? { photo }
+            : {}),
     };
 
     console.log("Payload to be sent:", payload);
 
     try {
-      if (isEditMode) {
-        await axios.patch(
-          `http://localhost:5000/api/qna/question/${id}`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post("http://localhost:5000/api/qna/question", payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
-      navigate("/QnA");
+        if (isEditMode) {
+            await axios.patch(
+                `http://localhost:5000/api/lostnfound/item/${id}`,
+                payload,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+        } else {
+            await axios.post("http://localhost:5000/api/lostnfound/item", payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        }
+        navigate("/lostnfound");
     } catch (err) {
-      console.error("Error saving question:", err);
-      Error("Failed to save question. Please try again.");
+        console.error("Error saving item:", err);
+        Error("Failed to save item. Please try again.");
     }
-  };
+};
 
   return (
     <motion.div
@@ -227,7 +239,7 @@ const Add_Edit_Question_Page = () => {
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen",
             }}
           >
-            {isEditMode ? "Edit Question" : "Add Question"}
+            {isEditMode ? "Edit Item" : "Add Item"}
           </h2>
 
           <div className="space-y-6">
@@ -236,11 +248,11 @@ const Add_Edit_Question_Page = () => {
               variant="outlined"
               label={
                 <span>
-                  Question <span className="text-red-500">*</span>
+                  Item <span className="text-red-500">*</span>
                 </span>
               }
-              value={questionName}
-              onChange={(e) => setQuestionName(e.target.value)}
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
               sx={{ backgroundColor: "white", borderRadius: "8px" }}
             />
 
@@ -278,6 +290,19 @@ const Add_Edit_Question_Page = () => {
                 </MenuItem>
               ))}
             </TextField>
+
+            <TextField
+              fullWidth
+              variant="outlined"
+              label={
+                <span>
+                  Contact <span className="text-red-500">*</span>
+                </span>
+              }
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: "8px" }}
+            />
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Upload Image</label>
@@ -358,11 +383,19 @@ const Add_Edit_Question_Page = () => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                checked={answered}
-                onChange={(e) => setAnswered(e.target.checked)}
+                checked={isFound}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsFound(checked);
+                  if (checked) {
+                    setFoundAt(foundAt || new Date().toISOString());
+                  } else {
+                    setFoundAt(null);
+                  }
+                }}
                 className="mr-2"
               />
-              <span className="text-gray-700">Mark as Answered</span>
+              <span className="text-gray-700">Mark as Found</span>
             </label>
 
             <div className="mt-5 flex align-right">
@@ -381,7 +414,7 @@ const Add_Edit_Question_Page = () => {
                   },
                 }}
               >
-                {isEditMode ? "Save Changes" : "Add Question"}
+                {isEditMode ? "Save Changes" : "Add Item"}
               </Button>
             </div>
           </div>
@@ -392,4 +425,4 @@ const Add_Edit_Question_Page = () => {
   );
 };
 
-export default Add_Edit_Question_Page;
+export default Add_Edit_LnF_Page;
