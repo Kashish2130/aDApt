@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import GroupChat from "../components/GroupChat";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -26,6 +27,7 @@ const QNAManagerPage = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const { isAdmin } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
+  const [chatOpen, setChatOpen] = useState(false);
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -324,12 +326,21 @@ const QNAManagerPage = () => {
         <div className="flex-1 p-6 transition-all duration-300">
           <div className="flex justify-between mb-4">
             <h1 className="text-2xl font-bold text-teal-800">Q&A Manager</h1>
-            <button
-              onClick={createQuestion}
-              className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
-            >
-              <Plus size={20} /> Add Question
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={createQuestion}
+                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
+              >
+                <Plus size={20} /> Add Question
+              </button>
+              <button
+                onClick={() => setChatOpen(true)}
+                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
+                title="Open Group Chat"
+              >
+                <MessageCircle size={20} /> Group Chat
+              </button>
+            </div>
           </div>
 
           {!selectedCategory ? (
@@ -433,7 +444,9 @@ const QNAManagerPage = () => {
                       )}
                       {/* Chat icon bottom left */}
                       <div className="absolute bottom-3 left-3 text-teal-600">
-                        <MessageCircle size={20} />
+                        <button onClick={e => { e.stopPropagation(); setChatOpen(true); }} title="Open group chat">
+                          <MessageCircle size={20} />
+                        </button>
                       </div>
                     </motion.div>
                   );
@@ -443,7 +456,16 @@ const QNAManagerPage = () => {
           )}
         </div>
       </div>
+      {/* Group Chat Modal */}
+      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} />
     </motion.div>
+  );
+  return (
+    <>
+      {/* Main page UI */}
+      {/* ...existing code... */}
+      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} room="qna" />
+    </>
   );
 };
 

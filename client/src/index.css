@@ -2,21 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 10px;
-  background: #f5f0cd;
-}
-::-webkit-scrollbar-thumb {
-  background: #81bfda;
-  border-radius: 8px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #4e71ff;
-}
-
-/* For Firefox */
-html {
-  scrollbar-color: #81bfda #f5f0cd;
-  scrollbar-width: thin;
-}

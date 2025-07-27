@@ -46,6 +46,10 @@ NOTE :
 -> chat with AI
 
 
-
+//
+index.js
+qna manager page
+lnf page
+group chat page
 
 

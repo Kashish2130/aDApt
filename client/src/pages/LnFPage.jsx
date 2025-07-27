@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import GroupChat from "../components/GroupChat";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -19,17 +20,25 @@ import toast from "react-hot-toast";
 const LnFPage = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-
   const [items, setItems] = useState("");
-
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [editedCategoryName, setEditedCategoryName] = useState("");
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const { isAdmin } = useContext(AuthContext);
+  const { isAdmin, isLoggedIn } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
+  const [chatOpen, setChatOpen] = useState(false);
+
+  // Group Chat Icon handler
+  const handleGroupChatClick = () => {
+    setChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setChatOpen(false);
+  };
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -340,12 +349,21 @@ const LnFPage = () => {
             <h1 className="text-2xl font-bold text-teal-800">
               Lost & Found Manager
             </h1>
-            <button
-              onClick={createQuestion}
-              className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
-            >
-              <Plus size={20} /> Add Item
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={createQuestion}
+                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
+              >
+                <Plus size={20} /> Add Item
+              </button>
+              <button
+                onClick={handleGroupChatClick}
+                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
+                title="Open Group Chat"
+              >
+                <MessageCircle size={20} /> Group Chat
+              </button>
+            </div>
           </div>
 
           {!selectedCategory ? (
@@ -461,7 +479,9 @@ const LnFPage = () => {
                       )}
                       {/* Chat icon bottom left */}
                       <div className="absolute bottom-3 left-3 text-teal-600">
-                        <MessageCircle size={20} />
+                        <button onClick={e => { e.stopPropagation(); setChatOpen(true); }} title="Open group chat">
+                          <MessageCircle size={20} />
+                        </button>
                       </div>
                     </motion.div>
                   );
@@ -471,7 +491,32 @@ const LnFPage = () => {
           )}
         </div>
       </div>
+      {/* Group Chat Modal */}
+      <GroupChat open={chatOpen} onClose={handleCloseChat} />
     </motion.div>
+  );
+  return (
+    <>
+      {/* Main page UI */}
+      {/* ...existing code... */}
+      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} room="lost-and-found" />
+    </>
+  );
+  return (
+    <div>
+      {/* ...existing Lost & Found UI... */}
+      <button
+        style={{ position: "fixed", right: 30, bottom: 30, zIndex: 9998, background: "#007bff", color: "#fff", borderRadius: "50%", width: 56, height: 56, border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", display: isLoggedIn ? "flex" : "none", alignItems: "center", justifyContent: "center", fontSize: 28, cursor: "pointer" }}
+        title="Group Chat"
+        onClick={handleGroupChatClick}
+      >
+        <MessageCircle />
+      </button>
+      {chatOpen && (
+        <GroupChat open={chatOpen} onClose={handleCloseChat} />
+      )}
+      {/* ...rest of Lost & Found UI... */}
+    </div>
   );
 };
 

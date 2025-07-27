@@ -11,8 +11,17 @@ import lostAndFoundRouter from "./routes/lnfRoute.js";
 import jwt from "jsonwebtoken";
 import User from "./models/userModel.js";
 
-const server = express();
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
 
+const app = express();
+const server = http.createServer(app);
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 main().catch((err) => {
   console.error("DB Connection failed: ", err);
@@ -26,7 +35,28 @@ async function main() {
   }
 }
 
-server.get("/", (req, res) => {
+// Socket.IO group chat logic
+let chatMessages = [];
+io.on("connection", (socket) => {
+  console.log("User connected to chat:", socket.id);
+
+  // Send existing messages to newly connected user
+  socket.emit("chat history", chatMessages);
+
+  // Listen for new messages
+  socket.on("chat message", (msg) => {
+    const message = { id: Date.now(), ...msg };
+    chatMessages.push(message);
+    io.emit("chat message", message); // Broadcast to all
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected from chat:", socket.id);
+  });
+});
+
+
+app.get("/", (req, res) => {
   res.send("Hey!This is my new Node JS project.");
 });
 
@@ -73,25 +103,22 @@ const auth = async (req, res, next) => {
 
 //cors is used to allow cross-origin requests
 // it is used to allow requests from different ports
-server.use(cors());
 
-//for parsing data which is coming through the json body
-server.use(express.json());
-
-//for parsing data which is coming through the form data // here it is for files |
-server.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //Routes
-server.use('/api/auth', authRouter);
-server.use("/api/emails", auth, emailRouter);
-// server.use('/uploads', express.static('uploads'));
-server.use("/api/upload", auth, uploadRouter);
-server.use("/api/shared-library", auth, sharedLibraryRouter);
-server.use("/api/qna", auth , qnaRouter);
-server.use("/api/lostnfound", auth, lostAndFoundRouter);
-
+app.use('/api/auth', authRouter);
+app.use("/api/emails", auth, emailRouter);
+// app.use('/uploads', express.static('uploads'));
+app.use("/api/upload", auth, uploadRouter);
+app.use("/api/shared-library", auth, sharedLibraryRouter);
+app.use("/api/qna", auth , qnaRouter);
+app.use("/api/lostnfound", auth, lostAndFoundRouter);
 
 
 server.listen(process.env.PORT, () => {
   console.log('server started');
-})
+  console.log('Socket.IO chat enabled');
+});
