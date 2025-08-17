@@ -1,30 +1,61 @@
-
 import React, { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000"; // Change if needed
-
-const GroupChat = ({ open, onClose, room = "global" }) => {
+const GroupChat = ({ open, onClose, room }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (!open) return;
-    socketRef.current = io(SOCKET_URL);
+    if (!open || !room) return;
+    // Fetch message history first
+    const fetchHistory = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        const res = await fetch(
+          `http://localhost:5000/api/groupchat/${room}/messages`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        const mapped = Array.isArray(data)
+          ? data.map((msg) => ({
+              id: msg._id,
+              userId: msg.sender?._id,
+              fullname: msg.sender?.fullname,
+              text: msg.message,
+              timestamp: msg.timestamp,
+            }))
+          : [];
+        setMessages(mapped);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchHistory();
 
-    socketRef.current.on("chat history", (history) => {
-      setMessages(history);
-    });
-    socketRef.current.on("chat message", (msg) => {
+    // Connect to socket.io server
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+    // Join the room
+    newSocket.emit("joinRoom", room);
+    // Listen for incoming messages
+    newSocket.on("receiveMessage", (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
+    // Cleanup on close/unmount
     return () => {
-      socketRef.current.disconnect();
+      newSocket.disconnect();
+      setSocket(null);
+      setMessages([]);
     };
-  }, [open]);
+  }, [open, room]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -34,16 +65,15 @@ const GroupChat = ({ open, onClose, room = "global" }) => {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    socketRef.current.emit("chat message", {
-      text: input,
-      userId: user?._id,
-      fullname: user?.fullname,
+    if (!input.trim() || !socket) return;
+    socket.emit("sendMessage", {
+      roomId: room,
+      message: input,
+      user,
     });
     setInput("");
   };
 
-  if (!open) return null;
   return (
     <div
       style={{
@@ -74,7 +104,9 @@ const GroupChat = ({ open, onClose, room = "global" }) => {
           borderTopRightRadius: 16,
         }}
       >
-        <span style={{ fontWeight: 700, fontSize: 18, color: "#1A202C" }}>Group Chat</span>
+        <span style={{ fontWeight: 700, fontSize: 18, color: "#1A202C" }}>
+          Group Chat
+        </span>
         <button
           onClick={onClose}
           style={{
@@ -90,11 +122,29 @@ const GroupChat = ({ open, onClose, room = "global" }) => {
           ×
         </button>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 14, background: "#fff" }}>
+
+      <div
+        style={{ flex: 1, overflowY: "auto", padding: 14, background: "#fff" }}
+      >
         {messages.map((msg) => {
           const msgUserId = String(msg.userId);
-          const currentUserId = String(user?._id);
+          const currentUserId = user && user._id ? String(user._id) : "";
           const isOwn = msgUserId === currentUserId;
+
+          // Color palette for users
+          const userColors = [
+            "#00897B", "#efc852ff", "#3bb9efff", "#ffA500", "#55f2b8ff"
+          ];
+          // Hash function to assign color based on userId
+          function getUserColor(id) {
+            let hash = 0;
+            for (let i = 0; i < id.length; i++) {
+              hash = id.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return userColors[Math.abs(hash) % userColors.length];
+          }
+          const nameColor = isOwn ? "#000000" : getUserColor(msgUserId);
+
           return (
             <div
               key={msg.id}
@@ -112,19 +162,17 @@ const GroupChat = ({ open, onClose, room = "global" }) => {
                   padding: "8px 16px",
                   maxWidth: "70%",
                   textAlign: isOwn ? "right" : "left",
-                //   boxShadow: isOwn
-                //     ? "0 2px 8px #81BFDA55"
-                //     : "0 2px 8px #FADA7A55",
-                //   border: isOwn ? "2px solid #81BFDA" : "2px solid #FADA7A",
                   fontSize: 15,
                 }}
               >
-                <span style={{ fontWeight: 700, fontSize: 13, color: isOwn ? "#00897B" : "#FADA7A" }}>
-                  {isOwn
-                    ? "You"
-                    : msg.fullname && msg.fullname !== user?.fullname
-                    ? msg.fullname
-                    : msg.fullname || "User"}
+                <span
+                  style={{
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: nameColor,
+                  }}
+                >
+                  {isOwn ? "You" : msg.fullname || "User"}
                 </span>
                 <br />
                 <span>{msg.text}</span>
@@ -134,6 +182,7 @@ const GroupChat = ({ open, onClose, room = "global" }) => {
         })}
         <div ref={messagesEndRef} />
       </div>
+
       <form
         onSubmit={sendMessage}
         style={{

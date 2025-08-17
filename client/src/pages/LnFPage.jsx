@@ -27,22 +27,24 @@ const LnFPage = () => {
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [editedCategoryName, setEditedCategoryName] = useState("");
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const { isAdmin, isLoggedIn } = useContext(AuthContext);
+  const { isAdmin } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
   const [chatOpen, setChatOpen] = useState(false);
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
 
-  // Group Chat Icon handler
-  const handleGroupChatClick = () => {
+  // Per-item group chat modal logic
+  const handleOpenChat = (itemId) => {
+    setSelectedChatRoomId(itemId);
     setChatOpen(true);
   };
 
   const handleCloseChat = () => {
     setChatOpen(false);
+    setSelectedChatRoomId(null);
   };
 
   // Fetch categories
   const fetchCategories = async () => {
-    //*DONE
     try {
       const res = await axios.get(
         "http://localhost:5000/api/lostnfound/categories",
@@ -58,7 +60,6 @@ const LnFPage = () => {
 
   // Add category
   const handleAddCategory = async () => {
-    //*DONE
     if (!newCategoryName.trim()) return;
     try {
       const res = await axios.post(
@@ -74,15 +75,13 @@ const LnFPage = () => {
     }
   };
 
-  // Navigate to add question page
+  // Navigate to add item page
   const createQuestion = () => {
-    //*DONE
     navigate("/add-edit-lnf-item");
   };
 
   // Update category
   const updateCategory = async (id, newName) => {
-    //*DONE
     if (!newName.trim()) return;
     try {
       const res = await axios.patch(
@@ -98,10 +97,8 @@ const LnFPage = () => {
     }
   };
 
-  // Navigate to edit question page
+  // Navigate to edit item page
   const handleEditItem = (item) => {
-    // For Lost & Found: navigate to edit page with item data
-    //*DONE
     navigate("/add-edit-lnf-item", {
       state: {
         itemId: item._id,
@@ -114,7 +111,6 @@ const LnFPage = () => {
 
   // Delete category
   const deleteCategory = async (id) => {
-    //*DONE
     try {
       await axios.delete(
         `http://localhost:5000/api/lostnfound/category/${id}`,
@@ -123,7 +119,6 @@ const LnFPage = () => {
         }
       );
       setCategories((prev) => prev.filter((cat) => cat._id !== id));
-      // If deleted category was selected, clear items and selectedCategory
       if (selectedCategory === id) {
         setSelectedCategory(null);
         setItems([]);
@@ -133,9 +128,8 @@ const LnFPage = () => {
     }
   };
 
-  // Delete question
+  // Delete item
   const handleDeleteItem = async (itemId) => {
-    //*DONE
     try {
       await axios.delete(
         `http://localhost:5000/api/lostnfound/item/${itemId}`,
@@ -149,30 +143,25 @@ const LnFPage = () => {
     }
   };
 
-  // Fetch questions for selected category
+  // Fetch items for selected category
   const fetchItemsByCategory = async (categoryId) => {
-    //*DONE
     if (!categoryId) return;
     try {
-      console.log("hey this is category id:", categoryId);
       const res = await axios.get(
         `http://localhost:5000/api/lostnfound/category/${categoryId}/items`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setItems(res.data);
-      console.log(res.data);
     } catch (err) {
       console.error("Error fetching items:", err);
     }
   };
 
   useEffect(() => {
-    //*DONE
     fetchCategories();
   }, []);
 
   useEffect(() => {
-    //*DONE
     if (selectedCategory) fetchItemsByCategory(selectedCategory);
     else setItems([]);
   }, [selectedCategory]);
@@ -356,13 +345,6 @@ const LnFPage = () => {
               >
                 <Plus size={20} /> Add Item
               </button>
-              <button
-                onClick={handleGroupChatClick}
-                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
-                title="Open Group Chat"
-              >
-                <MessageCircle size={20} /> Group Chat
-              </button>
             </div>
           </div>
 
@@ -414,18 +396,22 @@ const LnFPage = () => {
                       {/* Details */}
                       <div className="flex flex-col flex-1">
                         <p className="text-sm font-medium text-gray-800 truncate mt-1 mb-1">
-                          Created By: {" "}
+                          Created By:{" "}
                           <span className="font-normal">
                             {item.createdBy?.fullname || "Unknown"}
                           </span>
                         </p>
                         <div className="flex items-center mb-1">
-                          <span className="text-sm text-gray-800 mr-2">Contact:</span>
+                          <span className="text-sm text-gray-800 mr-2">
+                            Contact:
+                          </span>
                           {item.contact ? (
                             <span className="inline-flex items-center bg-teal-50 border border-teal-200 text-teal-700 px-2 py-0.5 rounded font-medium text-sm shadow-sm">
-                              <span className="mr-1 select-all">{item.contact}</span>
+                              <span className="mr-1 select-all">
+                                {item.contact}
+                              </span>
                               <button
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation();
                                   navigator.clipboard.writeText(item.contact);
                                   toast.success("Copied to clipboard");
@@ -442,7 +428,7 @@ const LnFPage = () => {
                           )}
                         </div>
                         <p className="text-sm text-gray-600 mb-1">
-                          Status: {" "}
+                          Status:{" "}
                           <span
                             className={`font-semibold ${
                               item.isFound ? "text-green-600" : "text-red-600"
@@ -462,14 +448,20 @@ const LnFPage = () => {
                       {(isAdmin || isOwner) && (
                         <div className="absolute bottom-3 right-3 flex gap-2">
                           <button
-                            onClick={e => { e.stopPropagation(); handleEditItem(item); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditItem(item);
+                            }}
                             title="Edit item"
                             className="p-1 rounded text-gray-600 hover:text-teal-600 transition"
                           >
                             <Pencil size={18} />
                           </button>
                           <button
-                            onClick={e => { e.stopPropagation(); handleDeleteItem(item._id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteItem(item._id);
+                            }}
                             title="Delete item"
                             className="p-1 rounded text-red-600 hover:text-red-700 transition"
                           >
@@ -479,7 +471,13 @@ const LnFPage = () => {
                       )}
                       {/* Chat icon bottom left */}
                       <div className="absolute bottom-3 left-3 text-teal-600">
-                        <button onClick={e => { e.stopPropagation(); setChatOpen(true); }} title="Open group chat">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenChat(item._id);
+                          }}
+                          title="Open group chat"
+                        >
                           <MessageCircle size={20} />
                         </button>
                       </div>
@@ -491,32 +489,15 @@ const LnFPage = () => {
           )}
         </div>
       </div>
-      {/* Group Chat Modal */}
-      <GroupChat open={chatOpen} onClose={handleCloseChat} />
-    </motion.div>
-  );
-  return (
-    <>
-      {/* Main page UI */}
-      {/* ...existing code... */}
-      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} room="lost-and-found" />
-    </>
-  );
-  return (
-    <div>
-      {/* ...existing Lost & Found UI... */}
-      <button
-        style={{ position: "fixed", right: 30, bottom: 30, zIndex: 9998, background: "#007bff", color: "#fff", borderRadius: "50%", width: 56, height: 56, border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", display: isLoggedIn ? "flex" : "none", alignItems: "center", justifyContent: "center", fontSize: 28, cursor: "pointer" }}
-        title="Group Chat"
-        onClick={handleGroupChatClick}
-      >
-        <MessageCircle />
-      </button>
-      {chatOpen && (
-        <GroupChat open={chatOpen} onClose={handleCloseChat} />
+      {/* Group Chat Modal (per-item) */}
+      {chatOpen && selectedChatRoomId && (
+        <GroupChat
+          open={chatOpen}
+          onClose={handleCloseChat}
+          room={selectedChatRoomId}
+        />
       )}
-      {/* ...rest of Lost & Found UI... */}
-    </div>
+    </motion.div>
   );
 };
 

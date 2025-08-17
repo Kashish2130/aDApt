@@ -43,12 +43,18 @@ const LoginPage = () => {
 
       console.log(response);
 
+
       const token = response.data.token;
-      const userData = response.data.user;
+      let userData = response.data.user;
       const Admin = response.data.user.isAdmin;
 
+      // If userData has 'id' but not '_id', add '_id' for consistency
+      if (userData && !userData._id && userData.id) {
+        userData._id = userData.id;
+      }
+
       sessionStorage.setItem("token", token);
-      sessionStorage.setItem("userData", JSON.stringify(userData));
+      sessionStorage.setItem("user", JSON.stringify(userData));
       sessionStorage.setItem("isLoggedIn", true);
       sessionStorage.setItem("isAdmin", Admin);
 

@@ -7,10 +7,8 @@ NOTE :
 
 -> posted at not working - becuase database does not have createdAt field in questions schema
 //this is because the fields which are getting added has that(automatically from the controller but manually added data does not have that)
--> how to remove uploaded image. in edit
 
-//extra feature
--> rearrange questions and items from thier places.
+-> how to remove uploaded image. in edit
 
 -> check for duplicate category name
 
@@ -22,34 +20,14 @@ NOTE :
 
 -> the expanding side bar button is 1/2 in height so fix that
 
--> arrow icon features page
-
--> default selected category
-
--> sidebar changes
-
--> chat 
--> socket.io
-
--> small bugs in responsiveness
-
--> optimization
-
--> deployement
-
--> component libraries
+-> deploy (versel/netlify - render)
 
 -> sign up with google
 
 -> search
 
--> chat with AI
-
-
-//
-index.js
-qna manager page
-lnf page
-group chat page
+//todo: current task
+3. then implement the chat in the both the pages using socket instead of the api calls
+4. deploy frontend on vercel or netlify and backend on render
 
 

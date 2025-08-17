@@ -28,6 +28,7 @@ const QNAManagerPage = () => {
   const { isAdmin } = useContext(AuthContext);
   const token = sessionStorage.getItem("token");
   const [chatOpen, setChatOpen] = useState(false);
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -333,13 +334,6 @@ const QNAManagerPage = () => {
               >
                 <Plus size={20} /> Add Question
               </button>
-              <button
-                onClick={() => setChatOpen(true)}
-                className="text-teal-600 font-semibold flex items-center gap-2 border border-teal-300 px-3 py-1 rounded-lg hover:bg-teal-50 transition"
-                title="Open Group Chat"
-              >
-                <MessageCircle size={20} /> Group Chat
-              </button>
             </div>
           </div>
 
@@ -444,7 +438,14 @@ const QNAManagerPage = () => {
                       )}
                       {/* Chat icon bottom left */}
                       <div className="absolute bottom-3 left-3 text-teal-600">
-                        <button onClick={e => { e.stopPropagation(); setChatOpen(true); }} title="Open group chat">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedChatRoomId(question._id); // Set the roomId
+                            setChatOpen(true); // Open modal
+                          }}
+                          title="Open group chat"
+                        >
                           <MessageCircle size={20} />
                         </button>
                       </div>
@@ -457,16 +458,14 @@ const QNAManagerPage = () => {
         </div>
       </div>
       {/* Group Chat Modal */}
-      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} />
+      {chatOpen && selectedChatRoomId && (
+        <GroupChat
+          open={chatOpen}
+          onClose={() => setChatOpen(false)}
+          room={selectedChatRoomId}
+        />
+      )}
     </motion.div>
   );
-  return (
-    <>
-      {/* Main page UI */}
-      {/* ...existing code... */}
-      <GroupChat open={chatOpen} onClose={() => setChatOpen(false)} room="qna" />
-    </>
-  );
 };
-
 export default QNAManagerPage;
