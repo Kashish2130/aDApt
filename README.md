@@ -3,6 +3,8 @@
 **aDApt** is a full-stack web application designed to streamline student's life by providing a unified platform for **resource sharing**, **Q&A**, **lost and found**, and **real-time group chat**.  
 aDApt enables students and administrators to **collaborate, communicate, and manage resources efficiently**.  
 
+---
+
 ## **Live Demo :**
 ### url : https://drive.google.com/file/d/1G1PxHaJC4yYcTDCnRXHfXI0GELFe3XhM/view?usp=sharing
 
@@ -42,8 +44,7 @@ aDApt enables students and administrators to **collaborate, communicate, and man
 - **Modern UI**: Responsive, user-friendly interface with **expanding sidebar** and intuitive navigation.  
 
 ## **Folder Structure**
-
-```bash
+```
 aDApt/
 ├── client/                # Frontend (React)
 │   ├── public/            # Static assets (images, icons, etc.)
@@ -69,3 +70,42 @@ aDApt/
 │
 ├── README.md              # Project documentation
 └── ...                    # Other root files (env, gitignore, etc.)
+```           
+
+## **Prerequisites**
+
+- [Node.js](https://nodejs.org/) (v16 or above recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
+- [MongoDB](https://www.mongodb.com/) (local or cloud instance)
+- (Optional) [Cloudinary](https://cloudinary.com/) account for image uploads
+
+## **Installation & Setup**
+
+1. **Clone the repository:**
+	```bash
+	git clone https://github.com/Kashish2130/aDApt.git
+	cd aDApt
+	```
+
+2. **Setup the backend:**
+	```bash
+	cd server
+	npm install
+	# Create a .env file (see .env.example if available) and configure:
+	# - MONGODB_URI
+	# - JWT_SECRET
+	# - CLOUDINARY credentials (if using image upload)
+	npm start
+	```
+
+3. **Setup the frontend:**
+	```bash
+	cd ../client
+	npm install
+	npm run dev
+	```
+
+4. **Access the app:**
+	- Frontend: http://localhost:5173 (default Vite port)
+	- Backend API: http://localhost:5000 (default Express port)
+
