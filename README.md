@@ -8,6 +8,8 @@ aDApt enables students and administrators to **collaborate, communicate, and man
 ## **Live Demo :**
 ### url : https://drive.google.com/file/d/1G1PxHaJC4yYcTDCnRXHfXI0GELFe3XhM/view?usp=sharing
 
+---
+
 ## **Tech Stack & Services**
 
 **Frontend**
@@ -91,10 +93,21 @@ aDApt/
 	```bash
 	cd server
 	npm install
-	# Create a .env file (see .env.example if available) and configure:
-	# - MONGODB_URI
-	# - JWT_SECRET
-	# - CLOUDINARY credentials (if using image upload)
+
+	=> Environment Setup:
+	1. In the `server` directory, create a file named `.env`.
+	2. Add the following variables (replace values as needed):
+		```env
+		PORT=5000
+		MONGO_URL=your_mongodb_connection_string
+		SECRET=your_jwt_secret
+		KEY=your_key
+		CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+		CLOUDINARY_API_KEY=your_cloudinary_api_key
+		CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+		```
+	3. Save the file. Your backend will now use these environment variables.
+
 	npm start
 	```
 
@@ -102,7 +115,13 @@ aDApt/
 	```bash
 	cd ../client
 	npm install
-	npm run dev
+
+	=> Go to package.json & update the start attribute under scripts :
+	"scripts": {
+    "start": "nodemon index.js",
+	..}
+
+	npm start
 	```
 
 4. **Access the app:**
